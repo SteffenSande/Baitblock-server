@@ -1,0 +1,167 @@
+[
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 1,
+    "fields": {
+        "news_site": 5,
+        "name": "Nrk Default",
+        "id_position": -1,
+        "id_separator": "-",
+        "id_length": 10,
+        "id_type": "NUMBERS_ONLY",
+        "placement": 1,
+        "created": "2018-02-19T15:57:16.633Z",
+        "modified": "2018-03-08T14:30:35.300Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 2,
+    "fields": {
+        "news_site": 6,
+        "name": "DN default",
+        "id_position": -3,
+        "id_separator": "",
+        "id_length": 4,
+        "id_type": "NUMBERS_ONLY",
+        "placement": 1,
+        "created": "2018-02-19T15:59:29.972Z",
+        "modified": "2018-03-08T14:14:02.618Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 3,
+    "fields": {
+        "news_site": 4,
+        "name": "VG default",
+        "id_position": -2,
+        "id_separator": "",
+        "id_length": 6,
+        "id_type": "ALPHA_NUMERIC",
+        "placement": 1,
+        "created": "2018-02-19T16:01:04.482Z",
+        "modified": "2018-03-08T14:13:52.149Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 4,
+    "fields": {
+        "news_site": 3,
+        "name": "Dagbladet default",
+        "id_position": -1,
+        "id_separator": "",
+        "id_length": 8,
+        "id_type": "NUMBERS_ONLY",
+        "placement": 1,
+        "created": "2018-02-19T16:01:47.153Z",
+        "modified": "2018-03-08T14:13:42.646Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 5,
+    "fields": {
+        "news_site": 1,
+        "name": "BT Last in url",
+        "id_position": -1,
+        "id_separator": "",
+        "id_length": 6,
+        "id_type": "NUMBERS_ONLY",
+        "placement": 1,
+        "created": "2018-02-19T16:03:20.641Z",
+        "modified": "2018-03-08T14:48:38.110Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 6,
+    "fields": {
+        "news_site": 2,
+        "name": "Aftenposten part of the slug (12)",
+        "id_position": -1,
+        "id_separator": "-",
+        "id_length": 12,
+        "id_type": "OTHER",
+        "placement": 2,
+        "created": "2018-02-19T16:03:32.649Z",
+        "modified": "2018-03-08T14:58:47.755Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 7,
+    "fields": {
+        "news_site": 2,
+        "name": "Aftenposten default",
+        "id_position": -2,
+        "id_separator": "",
+        "id_length": 6,
+        "id_type": "ALPHA_NUMERIC",
+        "placement": 3,
+        "created": "2018-02-19T16:04:07.966Z",
+        "modified": "2018-03-08T14:58:50.811Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 8,
+    "fields": {
+        "news_site": 1,
+        "name": "BT default",
+        "id_position": -2,
+        "id_separator": "",
+        "id_length": 6,
+        "id_type": "ALPHA_NUMERIC",
+        "placement": 3,
+        "created": "2018-02-19T16:04:28.065Z",
+        "modified": "2018-03-08T14:43:13.520Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 9,
+    "fields": {
+        "news_site": 4,
+        "name": "VG pluss",
+        "id_position": -1,
+        "id_separator": "_",
+        "id_length": 8,
+        "id_type": "NUMBERS_ONLY",
+        "placement": 2,
+        "created": "2018-03-08T14:46:20.256Z",
+        "modified": "2018-03-08T14:46:20.256Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 10,
+    "fields": {
+        "news_site": 1,
+        "name": "BT last in slug",
+        "id_position": -1,
+        "id_separator": "-",
+        "id_length": 12,
+        "id_type": "OTHER",
+        "placement": 2,
+        "created": "2018-03-08T14:49:23.831Z",
+        "modified": "2018-03-08T14:49:23.831Z"
+    }
+},
+{
+    "model": "articleScraper.articleurltemplate",
+    "pk": 11,
+    "fields": {
+        "news_site": 2,
+        "name": "Aftenposten part of the slug (11)",
+        "id_position": -1,
+        "id_separator": "-",
+        "id_length": 11,
+        "id_type": "OTHER",
+        "placement": 1,
+        "created": "2018-03-08T14:58:44.286Z",
+        "modified": "2018-03-08T14:58:44.286Z"
+    }
+}
+]

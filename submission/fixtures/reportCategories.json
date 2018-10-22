@@ -1,0 +1,16 @@
+[
+{
+    "model": "submission.reportcategory",
+    "pk": 1,
+    "fields": {
+        "category": "Clickbait"
+    }
+},
+{
+    "model": "submission.reportcategory",
+    "pk": 2,
+    "fields": {
+        "category": "Fake news"
+    }
+}
+]

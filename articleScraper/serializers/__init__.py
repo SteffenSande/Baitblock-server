@@ -1,0 +1,7 @@
+from .article import ArticleSerializer
+from .article_image_with_photographers import ArticleImageWithPhotographersSerializer as ArticleImageSerializer
+from .article_info_for_headline import ArticleInfoForHeadlineSerializer
+from .journalist_with_articles import JournalistWithArticlesSerializer as JournalistSerializer
+from .photographer_with_images import PhotographerWithImagesSerializer as PhotographerSerializer
+from .photographer_without_images import PhotographerWithoutImagesSerializer
+from .articleUrlTemplate import ArticleUrlTemplateSerializer

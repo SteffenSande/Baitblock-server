@@ -1,0 +1,34 @@
+[
+{
+    "model": "submission.limit",
+    "pk": 1,
+    "fields": {
+        "value": 0,
+        "key": "IGNORE"
+    }
+},
+{
+    "model": "submission.limit",
+    "pk": 2,
+    "fields": {
+        "value": 1,
+        "key": "LOW"
+    }
+},
+{
+    "model": "submission.limit",
+    "pk": 3,
+    "fields": {
+        "value": 2,
+        "key": "MID"
+    }
+},
+{
+    "model": "submission.limit",
+    "pk": 4,
+    "fields": {
+        "value": 3,
+        "key": "HIGH"
+    }
+}
+]
