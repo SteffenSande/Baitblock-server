@@ -12,8 +12,8 @@ class NewsSite(models.Model):
     """
         An news site object.
     """
-    headlineTemplate = models.ForeignKey('headlineScraper.HeadlineTemplate')
-    articleTemplate = models.ForeignKey('articleScraper.ArticleTemplate')
+    headlineTemplate = models.ForeignKey('headlineScraper.HeadlineTemplate',on_delete=models.CASCADE,)
+    articleTemplate = models.ForeignKey('articleScraper.ArticleTemplate', on_delete=models.CASCADE,)
 
     name = models.CharField(max_length=255, unique=True)
     abbreviation = models.CharField(max_length=255)

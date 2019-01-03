@@ -12,7 +12,7 @@ class HeadlineRevisionAdmin(admin.ModelAdmin):
 
 
 class HeadlineRevision(RevisionBase):
-    headline = models.ForeignKey('headlineScraper.headline')
+    headline = models.ForeignKey('headlineScraper.headline', on_delete=models.CASCADE )
 
     def file_path(self, folder: str, file_type='html') -> str:
         return os.path.join(folder, os.path.join(self.headline.news_site.file_folder(), self.filename(file_type)))

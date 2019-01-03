@@ -8,7 +8,7 @@ from helpers.base_models import RevisionBase
 
 
 class Revision(RevisionBase):
-    article = models.ForeignKey('articleScraper.Article')
+    article = models.ForeignKey('articleScraper.Article', on_delete=models.CASCADE,)
     journalists = models.ManyToManyField('articleScraper.Journalist')
     images = models.ManyToManyField('articleScraper.ArticleImage')
 

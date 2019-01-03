@@ -9,7 +9,7 @@ class RankAdmin(admin.ModelAdmin):
 
 
 class Rank(models.Model):
-    headline = models.ForeignKey('headlineScraper.Headline', related_name='ranks')
+    headline = models.ForeignKey('headlineScraper.Headline', related_name='ranks', on_delete=models.CASCADE,)
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)

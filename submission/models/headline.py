@@ -8,7 +8,7 @@ class HeadlineSummaryAdmin(admin.ModelAdmin):
 
 
 class HeadlineSummary(models.Model):
-    headline = models.ForeignKey('headlineScraper.headline')
+    headline = models.ForeignKey('headlineScraper.headline', on_delete=models.CASCADE,)
 
     one_line = models.TextField(max_length=2000)
     ip = models.GenericIPAddressField()

@@ -4,7 +4,7 @@ except ImportError:
     pass
 
 DEBUG = True
-ALLOWED_HOSTS = ['165.227.136.59']
+ALLOWED_HOSTS = ['165.227.136.59', 'localhost', '127.0.0.1']
 SECRET_KEY = "13"
 
 DATABASES = {

@@ -19,7 +19,7 @@ class ArticleUrlTemplate(models.Model):
         (OTHER, 'Other'),
     )
 
-    news_site = models.ForeignKey("scraper.NewsSite")
+    news_site = models.ForeignKey("scraper.NewsSite", on_delete=models.CASCADE,)
 
     name = models.CharField(max_length=255)
     id_position = models.IntegerField()

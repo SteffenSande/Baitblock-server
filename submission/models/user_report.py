@@ -8,7 +8,7 @@ class UserReportAdmin(admin.ModelAdmin):
 
 
 class UserReport(models.Model):
-    report = models.ForeignKey("submission.Report")
+    report = models.ForeignKey("submission.Report", on_delete=models.CASCADE,)
 
     ip = models.GenericIPAddressField()
     explanation = models.TextField()

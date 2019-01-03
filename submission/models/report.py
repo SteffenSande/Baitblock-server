@@ -9,8 +9,8 @@ class ReportAdmin(admin.ModelAdmin):
 
 
 class Report(models.Model):
-    headline = models.ForeignKey('headlineScraper.Headline')
-    category = models.ForeignKey("submission.ReportCategory")
+    headline = models.ForeignKey('headlineScraper.Headline', on_delete=models.CASCADE,)
+    category = models.ForeignKey("submission.ReportCategory", on_delete=models.CASCADE,)
 
     def __str__(self):
         return self.headline.__str__()

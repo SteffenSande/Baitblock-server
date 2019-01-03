@@ -6,7 +6,7 @@ from django.db import models
 class Journalist(models.Model):
     firstName = models.CharField(max_length=255)
     lastName = models.CharField(max_length=255)
-    news_site = models.ForeignKey('scraper.NewsSite')
+    news_site = models.ForeignKey('scraper.NewsSite', on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} {}'.format(self.firstName, self.lastName)
