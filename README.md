@@ -15,9 +15,8 @@ virtualenv -p Python3 venv
 source venv/bin/activate
 ```
 Move to root directory for the server (the place where you have the manage.py file)
-```bash
+~~~bash
 cd bait-block-server
 " Install requirements
 pip install -r requirements.txt
-```
-
+~~~
