@@ -6,8 +6,12 @@ from articleScraper.models import ArticleImage
 
 
 class ArticleImageList(generics.ListCreateAPIView):
+    serializer_class = ArticleImageSerializer
+    queryset = ArticleImage.objects.all()
+
     def list(self, request):
-        serializer = ArticleImageSerializer(ArticleImage.objects.all(), many=True)
+        serializer = ArticleImageSerializer(
+            ArticleImage.objects.all(), many=True)
         return Response(serializer.data)
 
 

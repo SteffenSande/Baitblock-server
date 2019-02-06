@@ -5,11 +5,11 @@ from api.views.mixins import MultipleFieldLookupMixin
 from articleScraper.models import Article, ArticleUrlTemplate
 from articleScraper.serializers import ArticleSerializer
 from scraper.models import NewsSite
-
 from helpers.utilities import find_headline_id
 
 
 class ArticleList(generics.ListCreateAPIView):
+    queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
     def get_queryset(self):
@@ -23,7 +23,8 @@ class ArticleDetail(MultipleFieldLookupMixin, generics.RetrieveAPIView):
 
     def get(self, request, pk, article_id):
         try:
-            queryset = Article.objects.get(news_site__id=pk, headline_id=article_id)
+            queryset = Article.objects.get(
+                news_site__id=pk, headline_id=article_id)
         except Article.DoesNotExist:
             return Response(status=404)
 
@@ -52,7 +53,8 @@ class ArticleSearch(MultipleFieldLookupMixin, generics.RetrieveAPIView):
             return Response(status=404)
 
         try:
-            queryset = Article.objects.get(news_site__id=pk, headline__url_id=url_id)
+            queryset = Article.objects.get(
+                news_site__id=pk, headline__url_id=url_id)
         except Article.DoesNotExist:
             return Response(status=404)
 

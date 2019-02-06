@@ -11,7 +11,10 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        exclude = ('created', 'modified',)
+        exclude = (
+            'created',
+            'modified',
+        )
 
     def get_word_cloud(self, obj):
         from django.conf import settings
@@ -24,5 +27,9 @@ class ArticleSerializer(serializers.ModelSerializer):
         except Revision.DoesNotExist:
             return ""
 
-        wordcloud_folder = os.path.join(settings.MEDIA_URL, settings.WORD_CLOUD_FOLDER.split(settings.MEDIA_URL)[1])
-        return os.path.join(wordcloud_folder, os.path.join(obj.file_folder(), revision.filename('png')))
+        wordcloud_folder = os.path.join(
+            settings.MEDIA_URL,
+            settings.WORD_CLOUD_FOLDER.split(settings.MEDIA_URL)[1])
+        return os.path.join(
+            wordcloud_folder,
+            os.path.join(obj.file_folder(), revision.filename('png')))

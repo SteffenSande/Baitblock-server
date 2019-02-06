@@ -7,11 +7,14 @@ from headlineScraper.serializers import HeadlineSerializer, HeadlineListSerializ
 
 
 class HeadlineList(generics.ListCreateAPIView):
+    queryset = Headline.objects.all()
     serializer_class = HeadlineSerializer
-    queryset = Headline.objects.none()
 
     def list(self, request, pk):
-        serializer = HeadlineListSerializer(Headline.objects.headlines_on_front_page(pk), many=True)
+        print(pk)
+        serializer = HeadlineListSerializer(
+            Headline.objects.headlines_on_front_page(pk), many=True)
+        print(serializer.data)
         return Response(serializer.data)
 
 

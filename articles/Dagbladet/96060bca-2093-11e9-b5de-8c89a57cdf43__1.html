@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link href="//styleguide.dagbladet.no/stylesheets/app.css?r5.8" id="db-critical" media="screen" rel="stylesheet">
+  <link href="fake-loading.css" media="screen" rel="stylesheet" type="text/css">
+  <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png">
+
+  <title>Dagbladet pluss - utvalgte saker.</title>
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <script>
+    dataLayer = [];
+    dataLayer.push({ "template": "article.reactswipe" });
+  </script>
+  <!-- Google Tag Manager -->
+  <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-TKBCJL"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-TKBCJL');</script>
+  <!-- End Google Tag Manager -->
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      background-color:#ececec;
+    }
+
+    #utgave {
+      min-height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div id="utgave">
+    <div id="utgave-loading">
+        <div id="fake-header">
+          <div id="fake-header-image" class="loading">
+          </div>
+          <div id="fake-header-paragraph-long" class="loading"></div>
+          <div id="fake-header-paragraph-small" class="loading"></div>
+        </div>
+        <div id="fake-body">
+          <div class="fake-body-title-paragraph long loading "></div>
+          <div class="fake-body-title-paragraph short loading "></div>
+          <div class="fake-body-title-paragraph shorter loading "></div>
+        </div>
+        <div id="fake-footer">
+        </div>
+    </div>
+  </div>
+
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/4.0.1/lazysizes.min.js"></script>
+  <script>
+
+    // Number.isNaN() polyfill
+      !(typeof Number.isNaN == 'function') ||
+        (Number.isNaN = function (value) {
+          return value !== null // Number(null) => 0
+            && (value != value // NaN != NaN
+              || +value != value // Number(falsy) => 0 && falsy == 0...
+            )
+        });
+
+      // see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN#Description
+      // for explanation of coercions (false, '0', '', null, and undefined)
+
+      console.warn(
+        [2, 3, 5, 7,
+        -0,
+        Number.NEGATIVE_INFINITY,
+        Number.POSITIVE_INFINITY,
+        +false, // +false => 0
+        +true,
+        false, // Number(false) => 0
+        true,
+        '0', // Number('0') => 0
+        '1',
+        '', // Number('') => 0
+        '       ',
+        null // Number(null) => 0
+        ]
+        .map(function(value) {
+          return !Number.isNaN(value);
+        })
+        .filter(function(ok, i) {
+          console.log(ok)
+          return ok || (function(i) {
+            throw 'test ' + (i) + ' failed.'
+          }(i))
+        })
+      );
+
+      console.warn(
+        [undefined, // +undefined => NaN
+        'jimmy',   // +'non-digit-string' => NaN
+        1 * 'a',   // multiplication on non-numeric value,
+        NaN        // because NaN !== NaN, of course
+        ]
+        .map(function(value) {
+          return Number.isNaN(value);
+        })
+        .filter(function(ok, i) {
+          return ok || (function(i) {
+            throw 'test ' + (i) + ' failed.'
+          }(i))
+        })
+      );
+
+
+
+    console.log("version ?r5.8");
+    (function () {
+      if ( typeof NodeList.prototype.forEach === "function" ) return false;
+      NodeList.prototype.forEach = Array.prototype.forEach;
+    })();
+    //add simple support for background images:
+    document.addEventListener('lazybeforeunveil', function(e){
+        var bg = e.target.getAttribute('data-bg');
+        if(bg){
+            e.target.style.backgroundImage = 'url(' + bg + ')';
+        }
+    });
+  </script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/plugins/ScrollToPlugin.min.js"></script>
+  <script type="text/javascript" src="/pluss/utgave/feed.php"></script>
+  <script type="text/javascript" src="/pluss/utgave/app.js?r5.8"></script>
+
+</body>
+
+</html>
