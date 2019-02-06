@@ -10,7 +10,8 @@ class ArticleManager(models.Manager):
         from scraper.models import NewsSite
         try:
             site = NewsSite.objects.get(id=site_id)
-            return self.filter(news_site=site_id)[:site.current_headline_count_on_front_page]
+            return self.filter(
+                news_site=site_id)[:site.current_headline_count_on_front_page]
         except NewsSite.DoesNotExist:
             return []
 
@@ -27,9 +28,14 @@ class Article(BaseItem):
         (VIDEO, 'Video'),
     )
 
-    headline = models.OneToOneField('headlineScraper.Headline', on_delete=models.CASCADE, primary_key=True,)
+    headline = models.OneToOneField(
+        'headlineScraper.Headline',
+        on_delete=models.CASCADE,
+        primary_key=True,
+    )
 
-    category = models.CharField(default=ARTICLE, choices=HEADLINE_CATEGORIES, max_length=255)
+    category = models.CharField(
+        default=ARTICLE, choices=HEADLINE_CATEGORIES, max_length=255)
 
     objects = ArticleManager()
 
@@ -37,11 +43,7 @@ class Article(BaseItem):
         return '{}'.format(self.headline.__str__())
 
     def update_or_create_defaults(self):
-        return {
-            'news_site': self.news_site,
-
-            'category': self.category
-        }
+        return {'news_site': self.news_site, 'category': self.category}
 
     @property
     def revisions(self):
@@ -79,7 +81,9 @@ class ArticleModelAdminForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ArticleModelAdminForm, self).__init__(*args, **kwargs)
         if 'instance' in kwargs:
-            self.fields['revisions'].choices = [(None, f) for f in kwargs['instance'].revisions]
+            self.fields['revisions'].choices = [
+                (None, f) for f in kwargs['instance'].revisions
+            ]
 
     class Meta:
         model = Article
@@ -87,14 +91,17 @@ class ArticleModelAdminForm(forms.ModelForm):
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    readonly_fields = ('created', 'modified',)
-    search_fields = ('revision__title', 'revision__sub_title',)
+    readonly_fields = (
+        'created',
+        'modified',
+    )
+    search_fields = (
+        'revision__title',
+        'revision__sub_title',
+    )
     list_display = ['revision', 'category']
 
-    list_filter = [
-        'news_site',
-        'category'
-    ]
+    list_filter = ['news_site', 'category']
 
     form = ArticleModelAdminForm
 
@@ -113,7 +120,10 @@ class ArticleAdmin(admin.ModelAdmin):
         article_query_objects = []
 
         for site in NewsSite.objects.active_news_sites():
-            article_query_objects += [x.headline.id for x in Article.objects.articles_on_front_page(site.id)]
+            article_query_objects += [
+                x.headline.id
+                for x in Article.objects.articles_on_front_page(site.id)
+            ]
         return Article.objects.filter(headline__id__in=article_query_objects)
 
 
