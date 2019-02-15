@@ -1,31 +1,23 @@
-from bs4 import BeautifulSoup
 import diff_match_patch
+
+from bs4 import BeautifulSoup
 
 
 class Differ(object):
-    def __init__(self, content_selector: str, old_content: str, new_content: str, css_prefix: str="news-enhancer-diff"):
+    def __init__(self, content_selector: str, old_content: str, new_content: str):
         """
             Module to find the diff between two html nodes
         Args:
             content_selector (str): Css selector of the content node
             old_content (str): Text representation of the old html node
             new_content (str): Text representation of the new html node
-            css_prefix (str): Css class prefix for marking added and removed text
+        Example:
+            input: Dette er noe : Dette er annet => "Dette er <old>noe<old/><new>annet<new/>"
         """
         self.content_selector = content_selector
         self.old_content = old_content
         self.new_content = new_content
         self.is_diff = False
-        self.style = """<style>
-            .news-enhancer-diff-old {
-            background: #FF7676;
-            }
-            .news-enhancer-diff-new {
-            background: #90ff90;
-            }
-        </style>"""
-
-        self.css_prefix_class = css_prefix
 
     def mark_added(self, text: str) -> str:
         """
@@ -49,17 +41,17 @@ class Differ(object):
         """
         return self.mark(text, "old")
 
-    def mark(self, text: str, css: str) -> str:
+    @staticmethod
+    def mark(text: str, change: str) -> str:
         """
-            Encapsulates text with a span tag with a specified css class.
+            Encapsulates a text with a fake tag new or old depending on it being new or old.
         Args:
             text (str): The text to be marked .
-            css (str): The css class to mark the text
-
+            change (str): Node name
         Returns (str):
             Text representation of a span tag encapsulating the text with the css class
         """
-        return '<span class=\"{0}-{1}\">{2}</span>'.format(self.css_prefix_class, css, text)
+        return '<' + change + '>' + text + '<' + change + '/>'
 
     def get_content(self, html: str) -> str:
         """
@@ -79,7 +71,7 @@ class Differ(object):
         """
         Merges diff between two strings with the most recent one.
         I.E "You are beautiful" And "You are not ugly." renders to
-        You are <span class="added">not</span> <span class="removed">beautiful</span><span class="added">ugly</span>
+        You are <new>not</new> <old>beautiful</old><new>ugly</new>
 
         Returns (str):
             String representation of off the diff between two files, merged with the diff.
@@ -112,7 +104,7 @@ class Differ(object):
                     self.is_diff = True
                 new_length += length
         if diff:
-            return '{}{}'.format(self.style, diff)
+            return diff
         else:
             return ''
 
@@ -154,7 +146,8 @@ class Differ(object):
                     self.is_diff = True
                 new_length += length
         if diff:
-            return '{}{}'.format(self.style, diff)
+            print(diff)
+            return diff
         else:
             return ''
 
@@ -165,15 +158,12 @@ class Differ(object):
         Tests if the char on the current index in a text, is inside a html tag definition
         I.E between < and >
 
-
-
         Args:
             original_text:
         Returns (bool):
             True if the it hits < when iterating backwards from current index in the text.
              False otherwise.
         """
-
         for c in reversed(original_text):
             if c == '<':
                 return True

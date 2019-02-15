@@ -1,12 +1,11 @@
 import abc
-import datetime
 import collections
+import datetime
 
 import pytz
 import requests
-from dateutil.parser import parse as date_parser
-
 from bs4 import BeautifulSoup
+from dateutil.parser import parse as date_parser
 
 
 class Scraper(object):
@@ -24,7 +23,8 @@ class Scraper(object):
     def download(self):
         return requests.get(self.url)
 
-    def base_get_text(self, element: BeautifulSoup, class_: str, method):
+    @staticmethod
+    def base_get_text(element: BeautifulSoup, class_: str, method):
         text = ''
         text_set = element.select_one(class_)
         if text_set:
@@ -54,7 +54,8 @@ class Scraper(object):
         except pytz.exceptions.NonExistentTimeError:
             return None
 
-    def remove_words_in_date_string(self, key, date: datetime):
+    @staticmethod
+    def remove_words_in_date_string(key, date: datetime):
         if key in date:
             data_split_on_keyword = date.split(key)
             if len(data_split_on_keyword) > 1:
@@ -64,7 +65,6 @@ class Scraper(object):
 
     def replace_local_month(self, date):
         replace_in_datetime = collections.OrderedDict()
-
         replace_in_datetime['januar'] = '01'
         replace_in_datetime['februar'] = '02'
         replace_in_datetime['mars'] = '03'

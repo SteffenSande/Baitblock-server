@@ -6,7 +6,6 @@ from .revision import RevisionSerializer
 
 class ArticleInfoForHeadlineSerializer(serializers.ModelSerializer):
     revision = RevisionSerializer()
-
     published = serializers.SerializerMethodField()
     updated = serializers.SerializerMethodField()
 

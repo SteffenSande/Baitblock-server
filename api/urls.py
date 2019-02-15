@@ -14,6 +14,8 @@ from api.views.search import search_for_links
 from api.views.test import test
 from api.views.api_root import api_root
 
+
+
 urlpatterns = [
     path('', api_root, name='api_root'),
     path('test/<int:pk>/', test, name='test'),
@@ -53,5 +55,5 @@ urlpatterns = [
         HeadlineDetail.as_view(),
         name='headline'),
     path('site/<int:pk>/', SiteDetail.as_view(), name='site'),
-    path('site/', SiteList.as_view(), name='site_list'),
+    path('site/', SiteList.as_view(), name='site_list')
 ]

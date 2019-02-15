@@ -23,11 +23,12 @@ class HeadlineAdmin(admin.ModelAdmin):
 
 class HeadlineManager(models.Manager):
     def headlines_on_front_page(self, site_id):
-        """ Only get the headlines that are currently on the frontpage.
-
+        """ Only get the headlines that are currently on the front page.
         :site_id: The number that represents the site that owns this headline
-        :returns: All the current healines that are on the
-                  frontpage of this news site
+        :returns: All the current headlines that are on the
+                  front page of this news site
+                  na not really, it returns the news objects that are currently on the frontpage.
+                  This is not good pratise and i will therefore change this.
 
         """
         from scraper.models import NewsSite
@@ -50,9 +51,7 @@ class Headline(BaseItem):
         related_name='summary',
         on_delete=SET_NULL)
     url_id = models.CharField(max_length=255, default="")
-
     url = models.URLField(unique=True, max_length=2500)
-
     objects = HeadlineManager()
 
     def __str__(self):
@@ -67,27 +66,13 @@ class Headline(BaseItem):
         return '{}.{}'.format(self.id, file_type)
 
     @property
-    def revisions(self):
-        from headlineScraper.models.revision import HeadlineRevision
-        return HeadlineRevision.objects.filter(headline=self)
-
-    @property
-    def revision(self):
-        from headlineScraper.models.revision import HeadlineRevision
-        try:
-            return HeadlineRevision.objects.filter(headline=self)[0]
-        except IndexError:
-            return None
-
-    @property
     def diffs(self):
-
         from django.conf import settings
         from helpers.utilities import read_file_content_as_string
 
         diffs = []
-        for revision in self.revisions:
 
+        for revision in self.revisions:
             try:
                 title_diff_path = revision.file_path(
                     settings.HEADLINE_TITLE_DIFF_FOLDER)
@@ -95,7 +80,7 @@ class Headline(BaseItem):
                 title_diff_content = read_file_content_as_string(
                     title_diff_path)
             except FileNotFoundError:
-                title_diff_content = ''  # TODO set to last value?
+                title_diff_content = ''  # TODO set to last value? na, makes no sense to make it last value.
 
             try:
                 sub_title_diff_path = revision.file_path(
@@ -104,7 +89,7 @@ class Headline(BaseItem):
                 sub_title_diff_content = read_file_content_as_string(
                     sub_title_diff_path)
             except FileNotFoundError:
-                sub_title_diff_content = ''  # TODO set to last value?
+                sub_title_diff_content = ''  # TODO set to last value? na, makes no sense to make it last value.
 
             if title_diff_content or sub_title_diff_content:
                 diffs.append({
