@@ -12,8 +12,8 @@ class NewsSite(models.Model):
     """
         An news site object.
     """
-    headlineTemplate = models.ForeignKey('headlineScraper.HeadlineTemplate',on_delete=models.CASCADE,)
-    articleTemplate = models.ForeignKey('articleScraper.ArticleTemplate', on_delete=models.CASCADE,)
+    headlineTemplate = models.ForeignKey('headlineScraper.HeadlineTemplate', on_delete=models.CASCADE, )
+    articleTemplate = models.ForeignKey('articleScraper.ArticleTemplate', on_delete=models.CASCADE, )
 
     name = models.CharField(max_length=255, unique=True)
     abbreviation = models.CharField(max_length=255)
@@ -32,7 +32,7 @@ class NewsSite(models.Model):
         return '{}'.format(self.name)
 
     def file_folder(self):
-        return self.name.replace(' ', '')
+        return str(self.name).replace(' ', '')
 
     def url(self):
         return '{}{}'.format('https://www.', self.base_url)

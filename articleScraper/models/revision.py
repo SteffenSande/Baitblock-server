@@ -33,10 +33,8 @@ class RevisionModelAdminForm(forms.ModelForm):
             self.fields['images'].choices = [(None, f) for f in ArticleImage.objects.filter(revision=kwargs['instance'])]
             self.fields['journalists'].choices = [(None, f) for f in
                                               Journalist.objects.filter(revision=kwargs['instance'])]
-            try:
-                self.fields['url'].initial = kwargs['instance'].article.headline.url
-            except:
-                pass
+
+            self.fields['url'].initial = kwargs['instance'].article.headline.url
 
     class Meta:
         model = Revision
@@ -53,8 +51,6 @@ class RevisionAdmin(admin.ModelAdmin):
     ]
 
     form = RevisionModelAdminForm
-
     exclude = ('images', 'journalists',)
-
 
 admin.site.register(Revision, RevisionAdmin)

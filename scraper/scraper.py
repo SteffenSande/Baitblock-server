@@ -1,15 +1,18 @@
 import abc
-import datetime
 import collections
+import datetime
 
 import pytz
 import requests
-from dateutil.parser import parse as date_parser
-
 from bs4 import BeautifulSoup
+from dateutil.parser import parse as date_parser
 
 
 class Scraper(object):
+    '''
+    Abstract class that makes an object implement the method scrape.
+    A scrape is basically downloading a page and grabbing the information that is needed from it.
+    '''
     __metaclass__ = abc.ABCMeta
 
     def __init__(self, site, parsing_template):
@@ -30,7 +33,7 @@ class Scraper(object):
         if text_set:
             text = method(text_set)
             if text:
-                text = ' '.join(text.split())
+                text = ' '.join(text.split()) # Is this to remove new lines and spaces, whyyyy
                 text = text.rstrip()
         return text
 
