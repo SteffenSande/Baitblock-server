@@ -22,7 +22,8 @@ class NewsSiteSerializer(serializers.ModelSerializer):
         url_templates = ArticleUrlTemplate.objects.filter(news_site=ob)
         return ArticleUrlTemplateSerializer(url_templates, many=True).data
 
-    def get_word_cloud(self, ob):
+    @staticmethod
+    def get_word_cloud(ob):
 
         from django.conf import settings
 

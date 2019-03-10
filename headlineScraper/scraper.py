@@ -37,7 +37,6 @@ class HeadlineScraper(Scraper):
         # Should raise exception...
         if not self.parsing_template:
             return None
-
         try:
             response = self.download()
         except:
