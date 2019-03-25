@@ -2,6 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from celery import shared_task
 
+from articleScraper.models.child import Child
 from scraper.models import NewsSite
 
 
@@ -60,7 +61,7 @@ def scrape_article(headline):
 
     # Scrapes the article
     scraper = ArticleScraper(headline)
-    revision, article, journalists, images = scraper.scrape()
+    revision, article, journalists, images, content_list = scraper.scrape()
 
     # Article.published is none when encounter a subscription article
     # Or if the "article" is a on a weird feed
@@ -69,15 +70,31 @@ def scrape_article(headline):
 
     article, created = Article.objects.update_or_create(headline=article.headline,
                                                         defaults=article.update_or_create_defaults())
-
-    revision.article = article
-    revision = save_revision(revision, scraper.source)
-
-    revision.journalists.all()
-    revision.images.all()
-    add_article_journalists(revision, journalists)
-    add_article_images(revision, images)
-    create_diffs_of_articles_for_site(article, headline.news_site)
+    last_revision = None
+    if article.revisions:
+        print('This is the content found on page' + article.headline.url)
+        print(list(article.revisions)[0].content)
+        # last_revision = list(article.revisions).sort(key=lambda rev: rev.version, reverse=True)[0] # This will  give the last element in the revision set
+    # But the revision set is not yet created.
+    # So need to figure out another way to do this.
+    # Check if we need to save the revision
+    if last_revision is None:
+        revision.article = article
+        # add_article_journalists(revision, journalists)
+        # add_article_images(revision, images)
+        revision.version = 1
+        revision.save()
+        # create_diffs_of_articles_for_site(article, headline.news_site)
+        content_list.sort(lambda key, value: key.pos)
+        for content, children in content_list:
+            content.revision = revision
+            content.save()
+            print('Content consists of:')
+            print(content)
+            print(children)
+            print()
+            for child in children:
+                Child(child=child, parent=content).save()
 
     return 'SUCCESS scrape one article'
 
@@ -180,7 +197,8 @@ def add_photographers_for_image(image, photographers):
     # Creates or fetches all photographers
     photographers_for_image = []
     for p in photographers:
-        photographer, photograph_created = Photographer.objects.get_or_create(firstName=p.firstName, lastName=p.lastName)
+        photographer, photograph_created = Photographer.objects.get_or_create(firstName=p.firstName,
+                                                                              lastName=p.lastName)
         photographers_for_image.append(photographer)
 
     # Adds the photographers to the images

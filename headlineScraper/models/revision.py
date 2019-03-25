@@ -1,6 +1,6 @@
-import os
 from django.contrib import admin
 from django.db import models
+from headlineScraper.models.headline import Headline
 
 from helpers.base_models import RevisionBase
 
@@ -12,11 +12,7 @@ class HeadlineRevisionAdmin(admin.ModelAdmin):
 
 
 class HeadlineRevision(RevisionBase):
-    headline = models.ForeignKey('headlineScraper.headline', on_delete=models.CASCADE )
-
-    def file_path(self, folder: str, file_type='html') -> str:
-        return os.path.join(folder, os.path.join(self.headline.news_site.file_folder(), self.filename(file_type)))
-
+    headline = models.ForeignKey(Headline, on_delete=models.CASCADE)
 
 
 admin.site.register(HeadlineRevision, HeadlineRevisionAdmin)

@@ -11,10 +11,8 @@ class HeadlineList(generics.ListCreateAPIView):
     serializer_class = HeadlineSerializer
 
     def list(self, request, pk):
-        print(pk)
         serializer = HeadlineListSerializer(
             Headline.objects.headlines_on_front_page(pk), many=True)
-        print(serializer.data) # Fix serializer to represent a headline and not a newsite object, but really a new site object should have more info than it has now.
         return Response(serializer.data)
 
 

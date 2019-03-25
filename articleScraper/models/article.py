@@ -28,6 +28,8 @@ class Article(BaseItem):
         (VIDEO, 'Video'),
     )
 
+    article = models.TextField(default=None, null=True)  # Entire Html document
+
     headline = models.OneToOneField(
         'headlineScraper.Headline',
         on_delete=models.CASCADE,
@@ -47,32 +49,7 @@ class Article(BaseItem):
 
     @property
     def revisions(self):
-        from articleScraper.models import Revision
-        return Revision.objects.filter(article__headline=self.headline)
-
-    @property
-    def revision(self):
-        from articleScraper.models import Revision
-        try:
-            return Revision.objects.filter(article__headline=self.headline)[0]
-        except IndexError:
-            return None
-
-    @property
-    def diffs(self):
-
-        from django.conf import settings
-        from helpers.utilities import read_file_content_as_string
-
-        diffs = []
-        for revision in self.revisions:
-            try:
-                diff_path = revision.file_path(settings.ARTICLE_DIFF_FOLDER)
-                diff_content = read_file_content_as_string(diff_path)
-                diffs.append(diff_content)
-            except FileNotFoundError:
-                pass
-        return diffs
+        return self.revision_set.all()
 
 
 class ArticleModelAdminForm(forms.ModelForm):
@@ -95,20 +72,10 @@ class ArticleAdmin(admin.ModelAdmin):
         'created',
         'modified',
     )
-    search_fields = (
-        'revision__title',
-        'revision__sub_title',
-    )
-    list_display = ['revision', 'category']
 
     list_filter = ['news_site', 'category']
 
     form = ArticleModelAdminForm
-
-    def revision(self, obj):
-        return obj.revision
-
-    revision.short_description = "Title"
 
     def get_queryset(self, request):
         """

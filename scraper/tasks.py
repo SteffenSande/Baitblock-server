@@ -1,10 +1,7 @@
 from __future__ import absolute_import, unicode_literals
-
 from datetime import timedelta
-
 from celery import shared_task
 from celery.task import periodic_task
-
 
 @periodic_task(
     run_every=timedelta(minutes=20),
@@ -30,8 +27,9 @@ def scrape_a_site(site):
     from headlineScraper.tasks import scrape_headlines
     from wordcloud_generator.tasks import generate_word_clouds
 
-    scrape_headlines(site)
-    scrape_articles(site)
-    generate_word_clouds(site)
+    if site.name == 'Dagbladet':
+        scrape_headlines(site)
+        # scrape_articles(site)
+    # generate_word_clouds(site)
 
     return 'Scraped success for site {}'.format(site.name)

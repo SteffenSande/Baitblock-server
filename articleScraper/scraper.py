@@ -5,8 +5,10 @@ from bs4 import BeautifulSoup
 from articleScraper.models import Article
 from articleScraper.models import ArticleImage
 from articleScraper.models import Revision
+from articleScraper.models.child import Child
 from articleScraper.models.journalist import Journalist
 from articleScraper.models.photographer import Photographer
+from articleScraper.models.content import Content
 
 from headlineScraper.models import Headline
 
@@ -41,19 +43,20 @@ class ArticleScraper(Scraper):
 
         # Should raise exception...
         if not self.parsing_template:
-            return None, None, None, None
+            return None, None, None, None, None
 
         try:
             response = self.download()
             self.source = response.text
         except:
-            return None, None, None, None
+            return None, None, None, None, None
 
         soup = BeautifulSoup(response.content, "html.parser")
+
         if soup:
             return self.parse(soup)
         else:
-            return None, None, None, None
+            return None, None, None, None, None
 
     def scrape_file(self, file: str):
         """
@@ -84,9 +87,10 @@ class ArticleScraper(Scraper):
         journalists = self.get_journalist(article)
         images = self.get_images(article)
         subscription = self.get_subscription(article)
+        content_list = self.get_content(article)
 
         if not title:
-            title = self.headline.revision.title
+            title = self.headline.revisions[0].title
 
         if self.get_video():
             category = Article.VIDEO
@@ -99,8 +103,10 @@ class ArticleScraper(Scraper):
             time = published
 
         revision = Revision(timestamp=time, title=title, sub_title=sub_title, words=words, subscription=subscription)
+
         article = Article(news_site=self.news_site, headline=self.headline, category=category)
-        return revision, article, journalists, images
+
+        return revision, article, journalists, images, content_list
 
     def get_images(self, article: BeautifulSoup):
         """
@@ -273,3 +279,42 @@ class ArticleScraper(Scraper):
         if self.parsing_template.video and self.parsing_template.video in self.headline.url:
             return True
         return False
+
+    def get_content(self, article: BeautifulSoup):
+        # make it work for Dagbladet first
+        search_for = ['p', 'h1', 'h2']
+        content_list = []
+
+        # Det er nok lurt å legge til posisjonen slik at du har noe å gå igjennom med etterpå.
+        # Kan slippe det seinere eller du henter jo ut listen med alle content noder og da ligger posisjon der enda.
+
+        def add_nodes_from(pos, node):
+            """
+            Method to create content nodes from scraped html nodes.
+
+            :param pos: Position of parent
+            :param node: What node to process
+            :return: position of next node
+            """
+            if node.name is not None:
+                children_list = []
+                root = Content(pos=pos, tag=node.name)
+                pos += 1
+                for child in node.children:
+                    pos = add_nodes_from(pos, child) + 1
+                    children_list.append(pos)
+                content_list.append((root, children_list))
+                return pos
+
+            else:
+                leaf = Content(pos=pos, content=str(node))
+                content_list.append((leaf, []))
+                return pos + 1
+
+        current_index = 0
+        for content in article.find_all(search_for):
+            if content.attrs == {}:  # Can later implement exclude tags
+                new_pos = add_nodes_from(current_index, content)
+                current_index = new_pos  # Kanskje pluss 1 her
+
+        return content_list

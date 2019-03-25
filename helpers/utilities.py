@@ -83,6 +83,7 @@ def text_differ(text1, text2):
     Returns:
         True if not equal, False otherwise
     """
+
     return text1 != text2
 
 

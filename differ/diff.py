@@ -1,10 +1,10 @@
-import diff_match_patch
+import diff_match_patch as dmp_module
 
 from bs4 import BeautifulSoup
 
 
 class Differ(object):
-    def __init__(self, content_selector: str, old_content: str, new_content: str):
+    def __init__(self, old_content: str, new_content: str):
         """
             Module to find the diff between two html nodes
         Args:
@@ -14,10 +14,10 @@ class Differ(object):
         Example:
             input: Dette er noe : Dette er annet => "Dette er <old>noe<old/><new>annet<new/>"
         """
-        self.content_selector = content_selector
         self.old_content = old_content
         self.new_content = new_content
         self.is_diff = False
+        self.diff = self.create_diff_of_text()
 
     def mark_added(self, text: str) -> str:
         """
@@ -51,21 +51,8 @@ class Differ(object):
         Returns (str):
             Text representation of a span tag encapsulating the text with the css class
         """
-        return '<' + change + '>' + text + '<' + change + '/>'
+        return '|' + change + '|' + text + '|' + change + '|'
 
-    def get_content(self, html: str) -> str:
-        """
-            Retrieves the specified content of a html node
-        Args:
-            html (str): Text representation of html
-
-        Returns (str):
-            Text representation of a specific html node
-
-        """
-        soup = BeautifulSoup(html, 'html.parser')
-        selected_content = soup.select_one(self.content_selector)
-        return str(selected_content)
 
     def create_diff_of_text(self) -> str:
         """
@@ -76,77 +63,20 @@ class Differ(object):
         Returns (str):
             String representation of off the diff between two files, merged with the diff.
         """
-
-        changes = diff_match_patch.diff(self.old_content, self.new_content, timelimit=5, checklines=False)
-
+        dmp = dmp_module.diff_match_patch()
+        changes = dmp.diff_main(self.old_content, self.new_content)
+        dmp.diff_cleanupSemantic(changes)
         diff = ""
-        old_length = 0
-        new_length = 0
-        for op, length in changes:
-            if op == "-":  # in old file
-                removed_text = self.old_content[old_length:old_length + length]
-                old_text = self.mark_removed(removed_text)
-                if old_text:
-                    diff += old_text
-                    self.is_diff = True
-                old_length += length
-            if op == "=":  # in both files
-                equal_text = self.new_content[new_length:new_length + length]
-                if equal_text:
-                    diff += equal_text
-                old_length += length
-                new_length += length
-            if op == "+":  # in new file
-                added_text = self.new_content[new_length:new_length + length]
-                new_text = self.mark_added(added_text)
-                if new_text:
-                    diff += new_text
-                    self.is_diff = True
-                new_length += length
+        for op, word in changes:
+            if op == 1:  # in old file
+                diff += self.mark_added(word)
+                self.is_diff = True
+            if op == 0:  # in both files
+                diff += word
+            if op == -1:  # in new file
+                diff += self.mark_removed(word)
+                self.is_diff = True
         if diff:
-            return diff
-        else:
-            return ''
-
-    def create_diff_of_html(self) -> str:
-        """
-        Merges diff between two strings with the most recent one.
-        I.E "You are beautiful" And "You are not ugly." renders to
-        You are <span class="added">not</span> <span class="removed">beautiful</span><span class="added">ugly</span>
-
-        Returns (str):
-            String representation of off the diff between two files, merged with the diff.
-        """
-        old_content = self.get_content(self.old_content)
-        new_content = self.get_content(self.new_content)
-
-        if not old_content and not new_content:
-            return ''
-
-        changes = diff_match_patch.diff(old_content, new_content, timelimit=5, checklines=False)
-        diff = ""
-        old_length = 0
-        new_length = 0
-        for op, length in changes:
-            if op == "-":  # in old file
-                if not self.is_in_tag_definition(old_content[0:old_length]):
-                    removed_text = old_content[old_length:old_length + length]
-                    diff += self.mark_removed(removed_text)
-                    self.is_diff = True
-                old_length += length
-
-            elif op == "=":  # in both files
-                diff += new_content[new_length:new_length + length]
-                old_length += length
-                new_length += length
-            elif op == "+":  # in new file
-                if not self.is_in_tag_definition(new_content[0:new_length]):
-                    added_text = new_content[new_length:new_length + length]
-                    diff += self.mark_added(added_text)
-                    self.is_diff = True
-                new_length += length
-        if diff:
-            print(diff)
             return diff
         else:
             return ''
@@ -170,3 +100,16 @@ class Differ(object):
             elif c == '>':
                 return False
         return False
+
+    @staticmethod
+    def content_diff(oldNodes, newNodes):
+        print('OldNodes: ', str(oldNodes), ' NewNodes: ', str(newNodes))
+
+        # Det var her jeg skrev kode sist.
+        # Hva var det jeg holdt på med ?
+        hasChange = False
+        # for old_node, new_node in oldNodes, newNodes:
+        # if old_node
+        # patches = dmp.patch_make(text1, text2)
+        # diff = dmp.patch_toText(patches)
+        # dmp.cleanupSemantic(diff)

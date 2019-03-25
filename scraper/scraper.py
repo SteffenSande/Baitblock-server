@@ -34,7 +34,7 @@ class Scraper(object):
         if text_set:
             text = method(text_set)
             if text:
-                text = ' '.join(text.split()) # Is this to remove new lines and spaces, whyyyy
+                text = ' '.join(text.split())
                 text = text.rstrip()
         return text
 

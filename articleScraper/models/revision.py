@@ -1,22 +1,22 @@
-import os
-
 from django import forms
 from django.contrib import admin
 from django.db import models
-
+from articleScraper.models.article import Article
 from helpers.base_models import RevisionBase
 
 
 class Revision(RevisionBase):
-    article = models.ForeignKey('articleScraper.Article', on_delete=models.CASCADE,)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, )
     journalists = models.ManyToManyField('articleScraper.Journalist')
     images = models.ManyToManyField('articleScraper.ArticleImage')
 
     words = models.IntegerField()
     subscription = models.BooleanField(default=False)
+    # Could move the diff to this model as a field with diff makes little to no sense.
 
-    def file_path(self, folder: str, file_type='html') -> str:
-        return os.path.join(folder, os.path.join(self.article.news_site.file_folder(), self.filename(file_type)))
+    @property
+    def content(self):
+        return self.content_set.all()
 
 
 class RevisionModelAdminForm(forms.ModelForm):
@@ -30,9 +30,10 @@ class RevisionModelAdminForm(forms.ModelForm):
 
         super(RevisionModelAdminForm, self).__init__(*args, **kwargs)
         if 'instance' in kwargs:
-            self.fields['images'].choices = [(None, f) for f in ArticleImage.objects.filter(revision=kwargs['instance'])]
+            self.fields['images'].choices = [(None, f) for f in
+                                             ArticleImage.objects.filter(revision=kwargs['instance'])]
             self.fields['journalists'].choices = [(None, f) for f in
-                                              Journalist.objects.filter(revision=kwargs['instance'])]
+                                                  Journalist.objects.filter(revision=kwargs['instance'])]
 
             self.fields['url'].initial = kwargs['instance'].article.headline.url
 
@@ -42,7 +43,7 @@ class RevisionModelAdminForm(forms.ModelForm):
 
 
 class RevisionAdmin(admin.ModelAdmin):
-    readonly_fields = ('title', 'timestamp', 'subscription', 'version', 'file')
+    readonly_fields = ('title', 'timestamp', 'subscription', 'version')
     search_fields = ('title', 'version',)
     list_display = ['title', 'timestamp', 'version', 'subscription']
 
@@ -52,5 +53,6 @@ class RevisionAdmin(admin.ModelAdmin):
 
     form = RevisionModelAdminForm
     exclude = ('images', 'journalists',)
+
 
 admin.site.register(Revision, RevisionAdmin)

@@ -7,14 +7,6 @@ from helpers.base_models import BaseItem
 
 class HeadlineAdmin(admin.ModelAdmin):
     readonly_fields = ('created', )
-    search_fields = (
-        'revision',
-        'revision',
-    )
-    list_display = [
-        'revision',
-        'revision',
-    ]
 
     list_filter = [
         'news_site',
@@ -55,48 +47,16 @@ class Headline(BaseItem):
     objects = HeadlineManager()
 
     def __str__(self):
-        return self.revision.__str__()
+        return "The headline id: " + str(self.url_id) + " with revisions: " + str(list(self.revisions));
 
     def __repr__(self):
         representation = "news_site__id: " + str(self.news_site)
         print(representation)
         return representation
 
-    def filename(self, file_type):
-        return '{}.{}'.format(self.id, file_type)
-
     @property
-    def diffs(self):
-        from django.conf import settings
-        from helpers.utilities import read_file_content_as_string
-
-        diffs = []
-
-        for revision in self.revisions:
-            try:
-                title_diff_path = revision.file_path(
-                    settings.HEADLINE_TITLE_DIFF_FOLDER)
-
-                title_diff_content = read_file_content_as_string(
-                    title_diff_path)
-            except FileNotFoundError:
-                title_diff_content = ''  # TODO set to last value? na, makes no sense to make it last value.
-
-            try:
-                sub_title_diff_path = revision.file_path(
-                    settings.HEADLINE_SUB_TITLE_DIFF_FOLDER)
-
-                sub_title_diff_content = read_file_content_as_string(
-                    sub_title_diff_path)
-            except FileNotFoundError:
-                sub_title_diff_content = ''  # TODO set to last value? na, makes no sense to make it last value.
-
-            if title_diff_content or sub_title_diff_content:
-                diffs.append({
-                    'title': title_diff_content,
-                    'sub_title': sub_title_diff_content
-                })
-        return diffs
+    def revisions(self):
+        return self.headlinerevision_set.all()
 
 
 admin.site.register(Headline, HeadlineAdmin)

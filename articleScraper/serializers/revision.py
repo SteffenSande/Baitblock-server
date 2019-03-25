@@ -11,4 +11,4 @@ class RevisionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Revision
-        exclude = ('article', 'file',)
+        exclude = ('article',)

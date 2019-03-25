@@ -3,19 +3,13 @@ from rest_framework import serializers
 from articleScraper.serializers import ArticleInfoForHeadlineSerializer
 from headlineScraper.models import HeadlineRevision
 from submission.serializers import ReportSerializer
-from submission.serializers.headline_summary import HeadlineSummarySerializer
 from headlineScraper.models import HeadlineTemplate, Rank, Headline
-
-
-class HeadlineDiffsSerializer(serializers.Serializer):
-    title = serializers.CharField()
-    sub_title = serializers.CharField()
 
 
 class HeadlineRevisionSerializer(serializers.ModelSerializer):
     class Meta:
         model = HeadlineRevision
-        exclude = ('timestamp', 'headline', 'id')
+        exclude = ('headline', 'id')
 
 
 class HeadlineTemplateSerializer(serializers.ModelSerializer):
@@ -33,15 +27,15 @@ class RankSerializer(serializers.ModelSerializer):
 class HeadlineSerializer(serializers.ModelSerializer):
     ranks = RankSerializer(many=True, read_only=True)
     revisions = HeadlineRevisionSerializer(many=True)
-    summary = HeadlineSummarySerializer()
-    reports = serializers.SerializerMethodField()
-    info = serializers.SerializerMethodField()
-    revision = HeadlineRevisionSerializer()
-    diffs = HeadlineDiffsSerializer(many=True)
+    # summary = HeadlineSummarySerializer()
+    # reports = serializers.SerializerMethodField()
+    # info = serializers.SerializerMethodField()
+    # revision = HeadlineRevisionSerializer()
+    diffs = serializers.SerializerMethodField()
 
     class Meta:
         model = Headline
-        exclude = ('created', 'revision')
+        exclude = ('created', 'summary')
 
     def get_info(self, obj):
         from articleScraper.models import Article
@@ -55,18 +49,37 @@ class HeadlineSerializer(serializers.ModelSerializer):
         from submission.models import Report
         report = Report.objects.filter(headline=obj)
         return ReportSerializer(report, many=True).data
+
+    def get_diff(serializer, self):
+        from differ.diff import Differ
+        revisions = list(self.revisions)
+        revisions.sort(key=lambda rev: rev.version, reverse=True)
+        diffs = [(revisions[0].title, revisions[0].sub_title)]
+        for index, revision in enumerate(revisions[1:]):
+            # index will be one less then we expect because i split the list from the 1st element.
+            print(revisions)
+            print(index)
+            title_diff = Differ(revisions[index].title, revision.title)
+            sub_title_diff = Differ(revisions[index].sub_title, revision.sub_title)
+            print()
+            print('title ', title_diff.diff, ' subtitle ', sub_title_diff.diff)
+            print(title_diff.is_diff)
+            if title_diff.is_diff or sub_title_diff.is_diff:
+                diffs.append((title_diff.diff, sub_title_diff.diff))
+        return diffs
 
 
 class HeadlineListSerializer(serializers.ModelSerializer):
-    summary = HeadlineSummarySerializer()
-    reports = serializers.SerializerMethodField()
-    info = serializers.SerializerMethodField()
-    revision = HeadlineRevisionSerializer()
-    diffs = HeadlineDiffsSerializer(many=True)
+    # summary = HeadlineSummarySerializer()
+    # reports = serializers.SerializerMethodField()
+    # info = serializers.SerializerMethodField()
+    # revision = HeadlineRevisionSerializer()
+    revisions = HeadlineRevisionSerializer(many=True)
+    diffs = serializers.SerializerMethodField()
 
     class Meta:
         model = Headline
-        exclude = ('created',)
+        exclude = ('created', 'summary')
 
     def get_info(self, obj):
         from articleScraper.models import Article
@@ -80,3 +93,17 @@ class HeadlineListSerializer(serializers.ModelSerializer):
         from submission.models import Report
         report = Report.objects.filter(headline=obj)
         return ReportSerializer(report, many=True).data
+
+    def get_diffs(serializer, self):
+        from differ.diff import Differ
+        revisions = list(self.revisions)
+        revisions.sort(key=lambda rev: rev.version, reverse=True)
+        diffs = [(revisions[0].title, revisions[0].sub_title)]
+
+        for index, revision in enumerate(revisions[1:]):
+            # index will be one less then we expect because i split the list from the 1st element.
+            title_diff = Differ(revisions[index].title,  revision.title)
+            sub_title_diff = Differ(revisions[index].sub_title,  revision.sub_title)
+            if title_diff.is_diff or sub_title_diff.is_diff:
+                diffs.append((title_diff.diff, sub_title_diff.diff))
+        return diffs
