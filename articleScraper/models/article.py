@@ -17,17 +17,6 @@ class ArticleManager(models.Manager):
 
 
 class Article(BaseItem):
-    ARTICLE = 'ARTICLE'
-    FEED = 'FEED'
-    EXTERNAL = 'EXTERNAL'
-    VIDEO = 'VIDEO'
-    HEADLINE_CATEGORIES = (
-        (ARTICLE, 'Article'),
-        (FEED, 'Feed'),
-        (EXTERNAL, 'External'),
-        (VIDEO, 'Video'),
-    )
-
     article = models.TextField(default=None, null=True)  # Entire Html document
 
     headline = models.OneToOneField(
@@ -36,8 +25,6 @@ class Article(BaseItem):
         primary_key=True,
     )
 
-    category = models.CharField(
-        default=ARTICLE, choices=HEADLINE_CATEGORIES, max_length=255)
 
     objects = ArticleManager()
 
@@ -45,7 +32,7 @@ class Article(BaseItem):
         return '{}'.format(self.headline.__str__())
 
     def update_or_create_defaults(self):
-        return {'news_site': self.news_site, 'category': self.category}
+        return {'news_site': self.news_site}
 
     @property
     def revisions(self):
@@ -73,7 +60,7 @@ class ArticleAdmin(admin.ModelAdmin):
         'modified',
     )
 
-    list_filter = ['news_site', 'category']
+    list_filter = ['news_site']
 
     form = ArticleModelAdminForm
 

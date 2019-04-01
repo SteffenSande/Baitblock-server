@@ -36,14 +36,22 @@ class Headline(BaseItem):
     """
         An news headline object.
     """
-    summary = models.ForeignKey(
-        'submission.HeadlineSummary',
-        null=True,
-        blank=True,
-        related_name='summary',
-        on_delete=SET_NULL)
+    ARTICLE = 'ARTICLE'
+    FEED = 'FEED'
+    EXTERNAL = 'EXTERNAL'
+    VIDEO = 'VIDEO'
+    HEADLINE_CATEGORIES = (
+        (ARTICLE, 'Article'),
+        (FEED, 'Feed'),
+        (EXTERNAL, 'External'),
+        (VIDEO, 'Video'),
+    )
+    category = models.CharField(
+        default=ARTICLE, choices=HEADLINE_CATEGORIES, max_length=255)
+
     url_id = models.CharField(max_length=255, default="")
     url = models.URLField(unique=True, max_length=2500)
+
     objects = HeadlineManager()
 
     def __str__(self):

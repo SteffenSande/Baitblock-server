@@ -58,20 +58,6 @@ class ArticleScraper(Scraper):
         else:
             return None, None, None, None, None
 
-    def scrape_file(self, file: str):
-        """
-            Extracts all content text from the article
-
-            Args:
-                file (str): filepath to the html file
-        """
-        try:
-            with open(file, 'rb') as f:
-                soup = BeautifulSoup(f.read().decode('utf-8'), "html.parser")
-                return self.get_article_text(soup)
-        except FileNotFoundError:
-            return ''
-
     def parse(self, article: BeautifulSoup):
         """
            Extracts values from the html soup and creates a article object
@@ -79,6 +65,7 @@ class ArticleScraper(Scraper):
                article (BeautifulSoup4):
                    A article represented as html.
         """
+
         title = self.get_title(article)
         sub_title = self.get_sub_title(article)
         published = self.get_published(article)
@@ -303,9 +290,9 @@ class ArticleScraper(Scraper):
                 for child in node.children:
                     pos = add_nodes_from(pos, child) + 1
                     children_list.append(pos)
+
                 content_list.append((root, children_list))
                 return pos
-
             else:
                 leaf = Content(pos=pos, content=str(node))
                 content_list.append((leaf, []))
@@ -316,5 +303,4 @@ class ArticleScraper(Scraper):
             if content.attrs == {}:  # Can later implement exclude tags
                 new_pos = add_nodes_from(current_index, content)
                 current_index = new_pos  # Kanskje pluss 1 her
-
         return content_list

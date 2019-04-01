@@ -24,7 +24,6 @@ def scrape_headlines(site):
     from articleScraper.models import ArticleUrlTemplate
 
     from django.db import IntegrityError
-
     scraper = HeadlineScraper(site)
     headlines_with_rank = scraper.scrape()
 
@@ -32,56 +31,56 @@ def scrape_headlines(site):
         return 'Failed to scrape site {}'.format(site.name)
 
     site.current_headline_count_on_front_page = len(headlines_with_rank)
+
     if site.current_headline_count_on_front_page > site.max_headlines_count:
         site.max_headlines_count = site.current_headline_count_on_front_page
 
     site.save()
     url_templates = ArticleUrlTemplate.objects.filter(news_site=site)
 
+    added_ids = []
     # Creates or updates all headlines
-    for revision, headline, rank in headlines_with_rank:
+    for revision, headline, rank, article_type in headlines_with_rank:
 
         # Check if revision title or subtitle is different than revision
-        headline_id = find_headline_id(headline.url, url_templates)
+        headline_id = find_headline_id(headline.url, url_templates)  # Finds id of headline
+
         try:
             new_url = format_url_for_site(headline.url, site.url())
 
-            try:
-                if headline_id:
-                    headline = Headline.objects.get(url_id=headline_id, news_site=site)
-                else:
-                    headline = Headline.objects.get(url=new_url, news_site=site)
-            except Headline.MultipleObjectsReturned:
-                # Hack because old data...
-                # If clean install remove this try except block and replace with
-                # headline = Headline.objects.get(url_id=headline_id, news_site=site)
-                # That should work....
-                continue
-
-            headline.url = new_url
-
-            # Revision is none only when we cannot locate the title of the headline
-            if revision is None:
-                headline.save()
-
+            if headline_id:
+                headline = Headline.objects.get(url_id=headline_id, news_site=site)
             else:
+                headline = Headline.objects.get(url=new_url, news_site=site)
+
+            headline.category = article_type
+            headline.url = new_url
+            headline.save()
+            if headline.url_id not in added_ids and (headline.category is not Headline.EXTERNAL):
+                # Revision is none only when we cannot locate the title of the headline
+                added_ids.append(headline.url_id)
                 headline_revisions = list(headline.revisions)
                 headline_revisions.sort(key=lambda rev: rev.version, reverse=True)
                 last_revision = headline_revisions[0]
+
+                # There is headlines that represent the same case, this is mainly because of the paid version
+                # Showing different content then the free version.
+                # A way to remove this is a slow search trough earlier added headlines
+                # could create a list over headline urls and check if it is added already
+
                 if text_differ(last_revision.title, revision.title) \
                         or text_differ(last_revision.sub_title, revision.sub_title):
-
                     # Save new url
                     headline.save()
                     # Save new revision
                     revision.headline = headline
                     revision.version = len(headline.revisions) + 1
                     revision.save()
-                # else no change detected
 
         except Headline.DoesNotExist:
             headline.url_id = headline_id
             try:
+                headline.category = article_type
                 headline.save()
             except IntegrityError:
                 continue

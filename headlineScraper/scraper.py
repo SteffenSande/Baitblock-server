@@ -2,6 +2,7 @@ import datetime
 
 from bs4 import BeautifulSoup
 
+from articleScraper.models import Article
 from headlineScraper.models import Headline
 from headlineScraper.models import Rank
 from headlineScraper.models.revision import HeadlineRevision
@@ -42,8 +43,7 @@ class HeadlineScraper(Scraper):
         except:
             return None
 
-        soup = BeautifulSoup(response.content, "html.parser")
-
+        soup = BeautifulSoup(response.text, "html.parser")
         if soup:
             soup = soup.select(self.parsing_template.headline)
 
@@ -54,22 +54,18 @@ class HeadlineScraper(Scraper):
             if not headline:
                 continue
 
-            skip = False
-            for exclude in self.parsing_template.exclude:
-                if headline.select_one(exclude):
-                    skip = True
-
-            if not skip:
-                success = self.parse(headline)
-                if success:
-                    self.headlines.append(success)
+            success = self.parse(headline)
+            if success:
+                self.headlines.append(success)
 
         # Post processing
-        for revision, headline, rank in self.headlines:
+        for revision, headline, rank, article_type in self.headlines:
             rank.of_total = len(self.headlines)
+
         return self.headlines
 
     def parse(self, headline: BeautifulSoup):
+
         """
            Extracts values from the html soup and creates headline object
            Args:
@@ -79,7 +75,7 @@ class HeadlineScraper(Scraper):
 
         title = self.get_title(headline)
         url = self.get_url(headline)
-
+        article_type = self.get_type(headline.a['href'])
         if not title or not url:
             return None
 
@@ -87,7 +83,7 @@ class HeadlineScraper(Scraper):
         rank = Rank(placement=len(self.headlines) + 1, of_total=0)
         revision = HeadlineRevision(title=title, sub_title=sub_title, timestamp=datetime.datetime.now())
         head = Headline(news_site=self.news_site, url=url)
-        return revision, head, rank
+        return revision, head, rank, article_type
 
     def get_url(self, headline: BeautifulSoup):
         """
@@ -132,3 +128,12 @@ class HeadlineScraper(Scraper):
         if self.parsing_template.sub_title:
             return self.get_text(headline, self.parsing_template.sub_title)
         return ''
+
+    def get_type(self, url_of_first_a_tag):
+        if self.news_site.base_url in url_of_first_a_tag:
+            if 'video' in url_of_first_a_tag:
+                return Headline.VIDEO
+            else:
+                return Headline.ARTICLE
+        else:
+            return Headline.EXTERNAL

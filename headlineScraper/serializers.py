@@ -56,14 +56,11 @@ class HeadlineSerializer(serializers.ModelSerializer):
         revisions.sort(key=lambda rev: rev.version, reverse=True)
         diffs = [(revisions[0].title, revisions[0].sub_title)]
         for index, revision in enumerate(revisions[1:]):
+
             # index will be one less then we expect because i split the list from the 1st element.
-            print(revisions)
-            print(index)
             title_diff = Differ(revisions[index].title, revision.title)
             sub_title_diff = Differ(revisions[index].sub_title, revision.sub_title)
-            print()
-            print('title ', title_diff.diff, ' subtitle ', sub_title_diff.diff)
-            print(title_diff.is_diff)
+
             if title_diff.is_diff or sub_title_diff.is_diff:
                 diffs.append((title_diff.diff, sub_title_diff.diff))
         return diffs

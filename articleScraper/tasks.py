@@ -71,13 +71,13 @@ def scrape_article(headline):
     article, created = Article.objects.update_or_create(headline=article.headline,
                                                         defaults=article.update_or_create_defaults())
     last_revision = None
+    # This is were the next implementation phase is.
+
+
     if article.revisions:
         print('This is the content found on page' + article.headline.url)
         print(list(article.revisions)[0].content)
-        # last_revision = list(article.revisions).sort(key=lambda rev: rev.version, reverse=True)[0] # This will  give the last element in the revision set
-    # But the revision set is not yet created.
-    # So need to figure out another way to do this.
-    # Check if we need to save the revision
+
     if last_revision is None:
         revision.article = article
         # add_article_journalists(revision, journalists)
@@ -89,40 +89,13 @@ def scrape_article(headline):
         for content, children in content_list:
             content.revision = revision
             content.save()
-            print('Content consists of:')
-            print(content)
-            print(children)
-            print()
             for child in children:
                 Child(child=child, parent=content).save()
 
-    return 'SUCCESS scrape one article'
-
-
-def save_revision(revision, data):
-    """
-        Saves a revision of the article if its updated or completely new
-        Args:
-            revision (Revision): The current revision
-            data (str): The article source data
-    """
-    import uuid
-    from helpers import utilities
-    from django.conf import settings
-
-    latest = revision.article.revision
-
-    if latest:
-        revision = utilities.persist_or_get_latest_revision(latest, revision, data)
     else:
-        revision.version = 1
+        print(last_revision)
 
-        revision.file = uuid.uuid1()
-        revision.save()
-
-        utilities.save_file(revision.file_path(settings.FILE_PATH_FIELD_DIRECTORY), data)
-
-    return revision
+    return 'SUCCESS scrape one article'
 
 
 def add_article_journalists(revision, journalists):
