@@ -90,4 +90,7 @@ db.sqlite3
 .idea
 venv
 media
-article
+articles
+.*
+logs
+celerybeat.pid
