@@ -56,6 +56,7 @@ def scrape_headlines(site):
             headline.category = article_type
             headline.url = new_url
             headline.save()
+
             if headline.url_id not in added_ids and (headline.category is not Headline.EXTERNAL):
                 # Revision is none only when we cannot locate the title of the headline
                 added_ids.append(headline.url_id)
