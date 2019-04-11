@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.db import models
-from django.db.models import SET_NULL
 
 from helpers.base_models import BaseItem
 
