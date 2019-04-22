@@ -54,7 +54,7 @@ class Headline(BaseItem):
     objects = HeadlineManager()
 
     def __str__(self):
-        return "The headline id: " + str(self.url_id) + " with revisions: " + str(list(self.revisions));
+        return "The headline id: " + str(self.id) + " with revisions: " + str(list(self.revisions));
 
     def __repr__(self):
         representation = "news_site__id: " + str(self.news_site)

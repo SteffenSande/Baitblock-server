@@ -1,13 +1,12 @@
 from rest_framework import serializers
-
 from articleScraper.models import Article
-from .revision import RevisionSerializer
+from articleScraper.serializers.revision import RevisionSerializer
+from differ.diff import Differ
 
 
 class ArticleSerializer(serializers.ModelSerializer):
     revisions = RevisionSerializer(many=True)
-    word_cloud = serializers.SerializerMethodField()
-    diffs = serializers.ListField()
+    diffs = serializers.SerializerMethodField()
 
     class Meta:
         model = Article
@@ -16,20 +15,31 @@ class ArticleSerializer(serializers.ModelSerializer):
             'modified',
         )
 
-    def get_word_cloud(self, obj):
-        from django.conf import settings
-        import os
+    def get_diffs(self, obj):
+        revisions = obj.revisions
+        last_revision = None
+        # Initialize the final diff list
+        diffs = []
+        # First entry is none so we compare the first with the second etc
+        for revision in revisions:
+            if last_revision is None:
+                last_revision = revision
+            else:
+                same = True
+                if len(last_revision.contents) != len(revision.contents):
+                    same = False
+                for index in range(len(last_revision.contents)):
+                    if last_revision.contents[index] != revision.contents[index]:
+                        same = False
 
-        from articleScraper.models import Revision
+                if not same:
+                    for index in range(len(last_revision.contents)):
+                        if last_revision.contents[index].content != revision.contents[index].content:
+                            diff = Differ(last_revision.contents[index].content, revision.contents[index].content).diff
+                            diffs.append(diff)
 
-        try:
-            revision = obj.revision
-        except Revision.DoesNotExist:
-            return ""
+            # Update the last revision so we can check if there are more changes!
+            # Might add a breakpoint to color it differently
+            last_revision = revision
 
-        wordcloud_folder = os.path.join(
-            settings.MEDIA_URL,
-            settings.WORD_CLOUD_FOLDER.split(settings.MEDIA_URL)[1])
-        return os.path.join(
-            wordcloud_folder,
-            os.path.join(obj.file_folder(), revision.filename('png')))
+        return None

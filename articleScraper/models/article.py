@@ -17,15 +17,11 @@ class ArticleManager(models.Manager):
 
 
 class Article(BaseItem):
-    article = models.TextField(default=None, null=True)  # Entire Html document
-
     headline = models.OneToOneField(
         'headlineScraper.Headline',
         on_delete=models.CASCADE,
         primary_key=True,
     )
-
-
     objects = ArticleManager()
 
     def __str__(self):

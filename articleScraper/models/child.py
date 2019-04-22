@@ -5,6 +5,7 @@ from articleScraper.models import Content
 
 
 class Child(models.Model):
+    """ A model that represents the relationship between the content nodes """
     content = models.ForeignKey(Content, on_delete=models.CASCADE)
     child = models.IntegerField(default=-1, null=False)
 

@@ -8,4 +8,4 @@ from articleScraper.models import Content
 class ContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Content
-        exclude = ('article',)
+        exclude = ('revision',)

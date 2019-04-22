@@ -6,6 +6,9 @@ from helpers.base_models import RevisionBase
 
 
 class Revision(RevisionBase):
+    class Meta:
+        ordering = ('-version',)
+
     article = models.ForeignKey(Article, on_delete=models.CASCADE, )
     journalists = models.ManyToManyField('articleScraper.Journalist')
     images = models.ManyToManyField('articleScraper.ArticleImage')
@@ -15,8 +18,9 @@ class Revision(RevisionBase):
     # Could move the diff to this model as a field with diff makes little to no sense.
 
     @property
-    def content(self):
+    def contents(self):
         return self.content_set.all()
+
 
 
 class RevisionModelAdminForm(forms.ModelForm):

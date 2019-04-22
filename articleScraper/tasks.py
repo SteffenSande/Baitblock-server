@@ -3,97 +3,94 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 
 from articleScraper.models.child import Child
-from scraper.models import NewsSite
+from articleScraper.models.article import Article
+from articleScraper.scraper import ArticleScraper
+from headlineScraper.models import Headline
 
 
 @shared_task(name='Scrape articles')
 def scrape_articles(site):
     """
-        Scrape a news sites articles which has a corresponding headline on the front page
-
-         Args:
-             site (NewsSite): News site to be scraped
+    This function is called from the scraper task that is being executed every 20 minutes and will scrape all the a tags
+    At the supported sites
+    This is done after we scrape the headlines
+    :param site: The site that we want to grab to headlines from
+    :return: None
     """
-    from articleScraper.models import Article
-    from headlineScraper.models import Headline
+    # Grab the headlines on the frontpage
     headlines = Headline.objects.headlines_on_front_page(site.id)
 
     if len(headlines) == 0:
+        # This shouldn't happen
+        # Because there should be at least one article on the front page!
         return "No Headlines on front page for {}".format(site.name)
 
     for headline in headlines:
         if site.base_url not in headline.url:
-            not_an_article(headline, Article.EXTERNAL)
+            not_an_article(headline)
         elif any(not_url in headline.url for not_url in headline.news_site.urls_is_not_an_article):
-            not_an_article(headline, Article.FEED)
+            not_an_article(headline)
         else:
             scrape_article(headline)
+
     return 'SUCCESS'
 
 
-def not_an_article(headline, article_type):
+def not_an_article(headline):
     """
-        Creates a empty article, which is either an external or a feed type
-
-        Args:
-            headline (Headline): The headline for the article
-            article_type (str): The article type
+    This is for all unsupported articles on the frontpage.
+    :param headline: reference to the headline object that correspond to this article
+    :return: None
     """
-    from articleScraper.models import Article
 
     article = Article(headline=headline,
-                      news_site=headline.news_site,
-                      category=article_type)
+                      news_site=headline.news_site)
     Article.objects.update_or_create(headline=headline, defaults=article.update_or_create_defaults())
-    return 'SUCCESS created {}'.format(article_type)
+    return 'SUCCESS created an article object even though it should\'t be supported'
 
 
 @shared_task(name="Scrape one article")
 def scrape_article(headline):
     """
-        Scrapes one article based on a headline.
-
-        Args:
-            headline (Headline): The article headline
+    This function is called from the scraper task that is being executed every 20 minutes and will scrape all the a tags
+    At the supported sites
+    This is done after we scrape the headlines
+    :param headline: reference to the headline object that we are scraping from.
+    :return: None: But right now it returns a string witch is kinda dumb.
     """
-    from articleScraper.models import Article
-    from articleScraper.scraper import ArticleScraper
-
-    # Scrapes the article
     scraper = ArticleScraper(headline)
     revision, article, journalists, images, content_list = scraper.scrape()
 
-    # Article.published is none when encounter a subscription article
-    # Or if the "article" is a on a weird feed
     if article is None:
         return "Article is None {}".format(headline.url)
 
     article, created = Article.objects.update_or_create(headline=article.headline,
                                                         defaults=article.update_or_create_defaults())
-    last_revision = None
-    # This is were the next implementation phase is.
-
-
-    if article.revisions:
-        print('This is the content found on page' + article.headline.url)
-        print(list(article.revisions)[0].content)
-
-    if last_revision is None:
+    if len(article.revisions) is 0:
         revision.article = article
-        # add_article_journalists(revision, journalists)
-        # add_article_images(revision, images)
-        revision.version = 1
+        revision.version = 0
         revision.save()
-        # create_diffs_of_articles_for_site(article, headline.news_site)
-        content_list.sort(lambda key, value: key.pos)
-        for content, children in content_list:
-            content.revision = revision
-            content.save()
-            for child in children:
-                Child(child=child, parent=content).save()
+        save_content(content_list, revision)
 
     else:
-        print(last_revision)
+        revisions = list(article.revisions)
+        revisions.sort(key=lambda rev: rev.version, reverse=True)
+        last_revision = revisions[0]
+        content = list(map(lambda x: x[0], content_list))
+        content.sort(key=lambda content_node: content_node.pos)
+        old_content = list(last_revision.contents)
+        old_content.sort(key=lambda content_node: content_node.pos)
+        # Create a boolean value that if it changes value we know that the content has been altered
+        # and therefore save it as a new revision
+        same = True
+        for i in range(len(old_content)):
+            if old_content[i] != content[i]:
+                same = False
+        if not same:
+            revision.article = article
+            revision.version = len(article.revisions)
+            revision.save()
+            save_content(content_list, revision)
 
     return 'SUCCESS scrape one article'
 
@@ -186,35 +183,28 @@ def add_photographers_for_image(image, photographers):
     return photographers_for_image
 
 
-@shared_task(name='Diff articles for site')
-def create_diffs_of_articles_for_site(article, site: NewsSite):
+def save_content(content_list, revision) -> None:
     """
-        Creates a diff for between an articles versions
+    A function that adds a foreign key to Content from revision
+    It also creates a foreign key to Content from child
+    This allows you to use a content node to grab all children nodes
+    This makes it possible to recreate the HTML structure from the database
 
-         Args:
-             article (Article): The article we want to create diff with
-             site (NewsSite): Site the article belongs to
+    :param content_list: (content, children_id_list)
+    :param revision: Already stored Revision object that we want connect this content to
+    :return: None
     """
-    from django.conf import settings
-    from helpers.utilities import read_file_content_as_string as file_content, save_file
-    from differ.diff import Differ
+    visited = [False] * len(content_list)
+    for content, children in content_list:
+        if not visited[content.pos]:
+            visited[content.pos] = True
+            content.revision = revision
+            content.save()
+            for child in children:
+                if not visited[child]:
+                    visited[child] = True
+                    child_content = content_list[child][0]
+                    child_content.revision = revision
+                    child_content.save()
+                    Child(content=content, child=child)
 
-    if not article:
-        return 'Article was None'
-
-    if len(article.revisions) <= 1:
-        return 'Article {} had only {} revision(s)'.format(article.headline.id, len(article.revisions))
-
-    try:
-        new_file_content = file_content(article.revisions[0].file_path(settings.FILE_PATH_FIELD_DIRECTORY))
-        old_file_content = file_content(article.revisions[1].file_path(settings.FILE_PATH_FIELD_DIRECTORY))
-        if new_file_content is None or old_file_content is None:
-            return 'An error has occurred. Cannot create diff for Article {}'.format(article.headline.id)
-        selector = site.articleTemplate.selector
-
-        differ = Differ(selector, old_file_content, new_file_content)
-        diff = differ.create_diff_of_html()
-        save_file(article.revisions[1].file_path(settings.ARTICLE_DIFF_FOLDER), diff)
-    except FileNotFoundError:
-        pass
-    return 'DIFFS SUCCESS'

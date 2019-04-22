@@ -29,7 +29,7 @@ def scrape_a_site(site):
 
     if site.name == 'Dagbladet':
         scrape_headlines(site)
-        # scrape_articles(site)
+        scrape_articles(site)
     # generate_word_clouds(site)
 
     return 'Scraped success for site {}'.format(site.name)

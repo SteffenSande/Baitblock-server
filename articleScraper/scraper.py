@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 from articleScraper.models import Article
 from articleScraper.models import ArticleImage
 from articleScraper.models import Revision
-from articleScraper.models.child import Child
 from articleScraper.models.journalist import Journalist
 from articleScraper.models.photographer import Photographer
 from articleScraper.models.content import Content
@@ -79,11 +78,6 @@ class ArticleScraper(Scraper):
         if not title:
             title = self.headline.revisions[0].title
 
-        if self.get_video():
-            category = Article.VIDEO
-        else:
-            category = Article.ARTICLE
-
         if updated:
             time = updated
         else:
@@ -91,7 +85,7 @@ class ArticleScraper(Scraper):
 
         revision = Revision(timestamp=time, title=title, sub_title=sub_title, words=words, subscription=subscription)
 
-        article = Article(news_site=self.news_site, headline=self.headline, category=category)
+        article = Article(news_site=self.news_site, headline=self.headline)
 
         return revision, article, journalists, images, content_list
 
@@ -174,7 +168,7 @@ class ArticleScraper(Scraper):
 
     def get_journalist(self, article: BeautifulSoup):
         """
-           Extracts the journalists from the article
+           Extracts the journalists from the
            Args:
                article (BeautifulSoup4):
                    A article represented as html.
@@ -267,7 +261,9 @@ class ArticleScraper(Scraper):
             return True
         return False
 
-    def get_content(self, article: BeautifulSoup):
+    @staticmethod
+    def get_content(article: BeautifulSoup):
+
         # make it work for Dagbladet first
         search_for = ['p', 'h1', 'h2']
         content_list = []
@@ -284,15 +280,17 @@ class ArticleScraper(Scraper):
             :return: position of next node
             """
             if node.name is not None:
+                # I wanna take care of the children of the content node
                 children_list = []
                 root = Content(pos=pos, tag=node.name)
+                content_list.append((root, []))
                 pos += 1
                 for child in node.children:
-                    pos = add_nodes_from(pos, child) + 1
                     children_list.append(pos)
-
-                content_list.append((root, children_list))
+                    pos = add_nodes_from(pos, child)
+                content_list[root.pos] = (root, children_list)
                 return pos
+
             else:
                 leaf = Content(pos=pos, content=str(node))
                 content_list.append((leaf, []))
@@ -300,7 +298,7 @@ class ArticleScraper(Scraper):
 
         current_index = 0
         for content in article.find_all(search_for):
-            if content.attrs == {}:  # Can later implement exclude tags
-                new_pos = add_nodes_from(current_index, content)
-                current_index = new_pos  # Kanskje pluss 1 her
+            if content.attrs == {} or content.attrs == {'class': 'txt-ind'}:  # Can later implement exclude tags or include tags.
+                add_nodes_from(current_index, content)
+                current_index = len(content_list)
         return content_list

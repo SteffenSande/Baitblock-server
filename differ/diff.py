@@ -1,7 +1,5 @@
 import diff_match_patch as dmp_module
 
-from bs4 import BeautifulSoup
-
 
 class Differ(object):
     def __init__(self, old_content: str, new_content: str):
@@ -100,16 +98,3 @@ class Differ(object):
             elif c == '>':
                 return False
         return False
-
-    @staticmethod
-    def content_diff(oldNodes, newNodes):
-        print('OldNodes: ', str(oldNodes), ' NewNodes: ', str(newNodes))
-
-        # Det var her jeg skrev kode sist.
-        # Hva var det jeg holdt på med ?
-        hasChange = False
-        # for old_node, new_node in oldNodes, newNodes:
-        # if old_node
-        # patches = dmp.patch_make(text1, text2)
-        # diff = dmp.patch_toText(patches)
-        # dmp.cleanupSemantic(diff)
