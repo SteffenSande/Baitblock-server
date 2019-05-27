@@ -2,7 +2,6 @@ import datetime
 
 from bs4 import BeautifulSoup
 
-from articleScraper.models import Article
 from headlineScraper.models import Headline
 from headlineScraper.models import Rank
 from headlineScraper.models.revision import HeadlineRevision

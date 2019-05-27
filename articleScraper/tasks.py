@@ -17,12 +17,14 @@ def scrape_articles(site):
     :param site: The site that we want to grab to headlines from
     :return: None
     """
-    # Grab the headlines on the frontpage
+
+    # Grab the headlines already scraped from the front pages
     headlines = Headline.objects.headlines_on_front_page(site.id)
 
     if len(headlines) == 0:
         # This shouldn't happen
         # Because there should be at least one article on the front page!
+        # In other words, maybe throw error here
         return "No Headlines on front page for {}".format(site.name)
 
     for headline in headlines:
@@ -58,39 +60,43 @@ def scrape_article(headline):
     :param headline: reference to the headline object that we are scraping from.
     :return: None: But right now it returns a string witch is kinda dumb.
     """
-    scraper = ArticleScraper(headline)
-    revision, article, journalists, images, content_list = scraper.scrape()
+    if headline.category == Headline.ARTICLE:
+        scraper = ArticleScraper(headline)
+        revision, article, journalists, images, content_list = scraper.scrape()
 
-    if article is None:
-        return "Article is None {}".format(headline.url)
+        if article is None:
+            return "Article is None {}".format(headline.url)
 
-    article, created = Article.objects.update_or_create(headline=article.headline,
-                                                        defaults=article.update_or_create_defaults())
-    if len(article.revisions) is 0:
-        revision.article = article
-        revision.version = 0
-        revision.save()
-        save_content(content_list, revision)
-
-    else:
-        revisions = list(article.revisions)
-        revisions.sort(key=lambda rev: rev.version, reverse=True)
-        last_revision = revisions[0]
-        content = list(map(lambda x: x[0], content_list))
-        content.sort(key=lambda content_node: content_node.pos)
-        old_content = list(last_revision.contents)
-        old_content.sort(key=lambda content_node: content_node.pos)
-        # Create a boolean value that if it changes value we know that the content has been altered
-        # and therefore save it as a new revision
-        same = True
-        for i in range(len(old_content)):
-            if old_content[i] != content[i]:
-                same = False
-        if not same:
+        article, created = Article.objects.update_or_create(headline=article.headline,
+                                                            defaults=article.update_or_create_defaults())
+        if len(article.revisions) is 0:
             revision.article = article
-            revision.version = len(article.revisions)
+            revision.version = 0
             revision.save()
             save_content(content_list, revision)
+
+        else:
+            revisions = list(article.revisions)
+            revisions.sort(key=lambda rev: rev.version, reverse=True)
+            last_revision = revisions[0]
+            content = list(map(lambda x: x[0], content_list))
+            content.sort(key=lambda content_node: content_node.pos)
+            old_content = list(last_revision.contents)
+            old_content.sort(key=lambda content_node: content_node.pos)
+            # Create a boolean value that if it changes value we know that the content has been altered
+            # and therefore save it as a new revision
+            same = True
+            if len(old_content) != len(content):
+                same = False
+            else:
+                for i in range(len(old_content)):
+                    if old_content[i] != content[i]:
+                        same = False
+            if not same:
+                revision.article = article
+                revision.version = len(article.revisions)
+                revision.save()
+                save_content(content_list, revision)
 
     return 'SUCCESS scrape one article'
 

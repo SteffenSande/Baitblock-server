@@ -24,8 +24,16 @@ class ArticleSerializer(serializers.ModelSerializer):
         for revision in revisions:
             if last_revision is None:
                 last_revision = revision
+                print(revision)
+                print(revision.contents)
+                print(last_revision.contents)
             else:
                 same = True
+                print("last_revision")
+                print(last_revision.contents)
+                print()
+                print('Revision')
+                print(revision.contents)
                 if len(last_revision.contents) != len(revision.contents):
                     same = False
                 for index in range(len(last_revision.contents)):

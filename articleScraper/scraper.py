@@ -64,6 +64,9 @@ class ArticleScraper(Scraper):
                article (BeautifulSoup4):
                    A article represented as html.
         """
+        # Need to find content in a different manner for each of the different sitetypes.
+        # Read this as studio, video, article etc.
+        # Assume that only articles ask for this functionality
 
         title = self.get_title(article)
         sub_title = self.get_sub_title(article)
@@ -261,11 +264,10 @@ class ArticleScraper(Scraper):
             return True
         return False
 
-    @staticmethod
-    def get_content(article: BeautifulSoup):
+    def get_content(self, article: BeautifulSoup):
 
         # make it work for Dagbladet first
-        search_for = ['p', 'h1', 'h2']
+        search_for = ['p']
         content_list = []
 
         # Det er nok lurt å legge til posisjonen slik at du har noe å gå igjennom med etterpå.
@@ -298,7 +300,11 @@ class ArticleScraper(Scraper):
 
         current_index = 0
         for content in article.find_all(search_for):
-            if content.attrs == {} or content.attrs == {'class': 'txt-ind'}:  # Can later implement exclude tags or include tags.
+            if 'missedeltaker-eirin-kan-bli-historis' in self.url:
+                print(self.headline)
+                print(content)
+            if content.attrs == {}:  # Can later implement exclude tags or include tags.
                 add_nodes_from(current_index, content)
                 current_index = len(content_list)
+
         return content_list
