@@ -10,12 +10,15 @@ from headlineScraper.models import Headline
 
 @shared_task(name='Scrape articles')
 def scrape_articles(site):
-    """
-    This function is called from the scraper task that is being executed every 20 minutes and will scrape all the a tags
-    At the supported sites
-    This is done after we scrape the headlines
-    :param site: The site that we want to grab to headlines from
-    :return: None
+    """Download and store the information on the site provided as a parameter
+    This is executed after headlines are downloaded and stored.
+    This function is called from the scraper task that is being executed every 20 minutes and will scrape all a tags of headlines on the front page
+
+    Args:
+        site (NewsSite): The site that we want to grab to headlines from
+
+    Returns:
+        None
     """
 
     # Grab the headlines already scraped from the front pages
@@ -39,10 +42,13 @@ def scrape_articles(site):
 
 
 def not_an_article(headline):
-    """
-    This is for all unsupported articles on the frontpage.
-    :param headline: reference to the headline object that correspond to this article
-    :return: None
+    """This is for all unsupported articles on the front page.
+
+    Args:
+        headline (Headline): reference to the headline object that correspond to this article
+
+    Returns:
+        None
     """
 
     article = Article(headline=headline,
@@ -52,13 +58,14 @@ def not_an_article(headline):
 
 
 @shared_task(name="Scrape one article")
-def scrape_article(headline):
-    """
-    This function is called from the scraper task that is being executed every 20 minutes and will scrape all the a tags
-    At the supported sites
-    This is done after we scrape the headlines
-    :param headline: reference to the headline object that we are scraping from.
-    :return: None: But right now it returns a string witch is kinda dumb.
+def scrape_article(headline: Headline):
+    """This tasks will be called from scrape_articles and will download and store an article that is found in a headlines a tag.
+
+    Args:
+        headline (Headline): reference to the headline object that we are scraping from.
+
+    Returns
+        None
     """
     if headline.category == Headline.ARTICLE:
         scraper = ArticleScraper(headline)
@@ -69,6 +76,7 @@ def scrape_article(headline):
 
         article, created = Article.objects.update_or_create(headline=article.headline,
                                                             defaults=article.update_or_create_defaults())
+
         if len(article.revisions) is 0:
             revision.article = article
             revision.version = 0
@@ -102,11 +110,11 @@ def scrape_article(headline):
 
 
 def add_article_journalists(revision, journalists):
-    """
-        Adds journalists to the article
-        Args:
-            revision (Revision): The article revision
-            journalists (Journalist): Journalists for the article.
+    """Adds journalists to the article
+
+    Args:
+        revision (Revision): The article revision
+        journalists (Journalist): Journalists for the article.
     """
     from articleScraper.models import Journalist
     for j in journalists:
@@ -129,11 +137,11 @@ def add_article_journalists(revision, journalists):
 
 
 def add_article_images(revision, images):
-    """
-        Adds journalists to the article
-        Args:
-            revision (Revision): The article revision
-            images (ArticleImage): images for the article.
+    """Adds journalists to the article
+
+    Args:
+        revision (Revision): The article revision
+        images (ArticleImage): images for the article.
     """
 
     from articleScraper.models import ArticleImage
@@ -161,11 +169,11 @@ def add_article_images(revision, images):
 
 
 def add_photographers_for_image(image, photographers):
-    """
-        Adds photographers to the article image
-        Args:
-            image (ArticleImage): The image taken bt the photographers
-            photographers (Photographers): The photographers
+    """Adds photographers to the article image
+
+    Args:
+        image (ArticleImage): The image taken by the photographers
+        photographers (Photographers): The photographers
     """
     from articleScraper.models import Photographer
     from django.db import utils
@@ -190,16 +198,20 @@ def add_photographers_for_image(image, photographers):
 
 
 def save_content(content_list, revision) -> None:
-    """
+    """Save content and connect it to a revision
     A function that adds a foreign key to Content from revision
     It also creates a foreign key to Content from child
     This allows you to use a content node to grab all children nodes
     This makes it possible to recreate the HTML structure from the database
 
-    :param content_list: (content, children_id_list)
-    :param revision: Already stored Revision object that we want connect this content to
-    :return: None
+    Args:
+        content_list ((str, [int])): (content, children_id_list)
+        revision (Revision): Already stored Revision object that we want connect this content to
+
+    Returns:
+        None
     """
+
     visited = [False] * len(content_list)
     for content, children in content_list:
         if not visited[content.pos]:
@@ -214,3 +226,67 @@ def save_content(content_list, revision) -> None:
                     child_content.save()
                     Child(content=content, child=child)
 
+
+@shared_task(name='Find an article and make a change')
+def scrape_site_for_a_article_of_type_article(headline):
+    scrape_article(headline)
+    scrape_article_with_change(headline, 'This is a change')
+    # Need to create a version of the articles content nodes
+
+    return "Scraped article: " + str(headline)
+
+@shared_task(name="Scrape one article with changes")
+def scrape_article_with_change(headline, change: str):
+    """This tasks will be called from scrape_articles and will download and store an article that is found in a headlines a tag.
+
+    Args:
+        headline (Headline): reference to the headline object that we are scraping from.
+        change (str): the change to the content nodes
+
+    Returns
+        None
+    """
+    if headline.category == Headline.ARTICLE:
+
+        scraper = ArticleScraper(headline)
+        revision, article, journalists, images, content_list = scraper.scrape()
+
+        if article is None:
+            return "Article is None {}".format(headline.url)
+
+        article, created = Article.objects.update_or_create(headline=article.headline,
+                                                            defaults=article.update_or_create_defaults())
+        for content, element in content_list:
+            if content.content:
+                content.content = change
+
+        if len(article.revisions) is 0:
+            revision.article = article
+            revision.version = 0
+            revision.save()
+            save_content(content_list, revision)
+
+        else:
+            revisions = list(article.revisions)
+            revisions.sort(key=lambda rev: rev.version, reverse=True)
+            last_revision = revisions[0]
+            content = list(map(lambda x: x[0], content_list))
+            content.sort(key=lambda content_node: content_node.pos)
+            old_content = list(last_revision.contents)
+            old_content.sort(key=lambda content_node: content_node.pos)
+            # Create a boolean value that if it changes value we know that the content has been altered
+            # and therefore save it as a new revision
+            same = True
+            if len(old_content) != len(content):
+                same = False
+            else:
+                for i in range(len(old_content)):
+                    if old_content[i] != content[i]:
+                        same = False
+            if not same:
+                revision.article = article
+                revision.version = len(article.revisions)
+                revision.save()
+                save_content(content_list, revision)
+
+    return 'SUCCESS scrape one article'

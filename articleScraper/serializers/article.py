@@ -24,22 +24,14 @@ class ArticleSerializer(serializers.ModelSerializer):
         for revision in revisions:
             if last_revision is None:
                 last_revision = revision
-                print(revision)
-                print(revision.contents)
-                print(last_revision.contents)
             else:
                 same = True
-                print("last_revision")
-                print(last_revision.contents)
-                print()
-                print('Revision')
-                print(revision.contents)
                 if len(last_revision.contents) != len(revision.contents):
                     same = False
                 for index in range(len(last_revision.contents)):
                     if last_revision.contents[index] != revision.contents[index]:
                         same = False
-
+                print(same)
                 if not same:
                     for index in range(len(last_revision.contents)):
                         if last_revision.contents[index].content != revision.contents[index].content:
@@ -50,4 +42,4 @@ class ArticleSerializer(serializers.ModelSerializer):
             # Might add a breakpoint to color it differently
             last_revision = revision
 
-        return None
+        return diffs

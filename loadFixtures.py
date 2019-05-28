@@ -10,3 +10,4 @@ comand = './manage.py loaddata '
 os.system(comand + articles)
 os.system(comand + headlines)
 os.system(comand + scraper)
+os.system(comand + urls)

@@ -2,4 +2,4 @@
 import os
 os.system('./manage.py flush --no-input')
 import loadFixtures
-
+os.system('./manage.py shell')

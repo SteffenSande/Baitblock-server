@@ -11,18 +11,16 @@ from scraper.scraper import Scraper
 
 
 class HeadlineScraper(Scraper):
-    """
-        Html scraping class.
-        Uses BeautifulSoup to scrape certain sites for news headlines.
+    """HTML scraping class.
+
+    Uses BeautifulSoup to scrape certain sites for news headlines.
     """
 
     def __init__(self, site: NewsSite):
-        """
-            Constructor
+        """Constructor
 
-            Args:
-                site (NewsSite):
-                    The site to be scraped
+        Args:
+            site (NewsSite): The site to be scraped
         """
 
         super(self.__class__, self).__init__(site, site.headlineTemplate)
@@ -30,8 +28,7 @@ class HeadlineScraper(Scraper):
         self.url = site.url()
 
     def scrape(self):
-        """
-            Extracts values from the html and creates headline object
+        """Extracts values from the html and creates headline object
         """
 
         # Should raise exception...
@@ -65,11 +62,10 @@ class HeadlineScraper(Scraper):
 
     def parse(self, headline: BeautifulSoup):
 
-        """
-           Extracts values from the html soup and creates headline object
-           Args:
-               headline (BeautifulSoup4):
-                   A headline represented as html.
+        """Extracts values from the html soup and creates headline object
+        Args:
+           headline (BeautifulSoup4):
+               A headline represented as html.
        """
 
         title = self.get_title(headline)
@@ -85,8 +81,7 @@ class HeadlineScraper(Scraper):
         return revision, head, rank, article_type
 
     def get_url(self, headline: BeautifulSoup):
-        """
-        Extracts the headline url
+        """Extracts the headline url
 
         Args:
             headline (BeautifulSoup): A Headline object represented as html.
@@ -103,8 +98,7 @@ class HeadlineScraper(Scraper):
         return url
 
     def get_title(self, headline: BeautifulSoup):
-        """
-        Extracts the headline title
+        """Extracts the headline title
 
         Args:
             headline (BeautifulSoup): A Headline object represented as html.
@@ -115,8 +109,7 @@ class HeadlineScraper(Scraper):
         return self.get_text(headline, self.parsing_template.title)
 
     def get_sub_title(self, headline: BeautifulSoup):
-        """
-        Extracts the headline sub_title
+        """Extracts the headline sub_title
 
         Args:
             headline (BeautifulSoup): A Headline object represented as html.

@@ -1,1 +1,0 @@
-You have to reimplement the way you store revisions. Diff can be removed and created as a service when api serves JSON responses to the client.
