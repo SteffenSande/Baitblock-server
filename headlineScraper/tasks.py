@@ -1,7 +1,10 @@
 from __future__ import absolute_import, unicode_literals
 
 import datetime
+import sys
+
 from celery import shared_task
+from hyperlink._url import NoneType
 
 from helpers.utilities import text_differ
 
@@ -80,6 +83,10 @@ def store_headlines(headlines_with_rank, site, url_templates):
                 continue
         except IntegrityError:
             continue
+        except TypeError:
+            print('There is a nonetype error at ', site)
+            sys.exit(1)
+
         rank.headline = headline
         rank.save()
 
