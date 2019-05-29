@@ -30,7 +30,6 @@ class HeadlineScraper(Scraper):
     def scrape(self):
         """Extracts values from the html and creates headline object
         """
-
         # Should raise exception...
         if not self.parsing_template:
             return None

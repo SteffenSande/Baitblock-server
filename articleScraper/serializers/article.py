@@ -34,11 +34,18 @@ class ArticleSerializer(serializers.ModelSerializer):
                 print(same)
                 if not same:
                     for index in range(len(last_revision.contents)):
-                        if last_revision.contents[index].content != revision.contents[index].content:
-                            # There is a mistake here
-                            diff = Differ(last_revision.contents[index].content, revision.contents[index].content).diff
-                            diffs.append(diff)
-
+                        if index < len(last_revision.contents) and index < len(revision.contents):
+                            if last_revision.contents[index].content != revision.contents[index].content:
+                                # There is a mistake here
+                                diff = Differ(last_revision.contents[index].content, revision.contents[index].content).diff
+                                diffs.append(diff)
+                        else:
+                            if len(last_revision.contents) < len(revision.contents):
+                                diff = Differ('', revision.contents[index].content).diff
+                                diffs.append(diff)
+                            else:
+                                diff = Differ(last_revision.contnets[index].content, '').diff
+                                diffs.append(diff)
             # Update the last revision so we can check if there are more changes!
             # Might add a breakpoint to color it differently
             last_revision = revision
