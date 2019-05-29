@@ -14,7 +14,7 @@ class RevisionSerializer(serializers.ModelSerializer):
     images = ArticleImageWithPhotographersSerializer(many=True)
     journalists = JournalistWithoutArticlesSerializer(many=True)
     # Uncomment to send content nodes as a part of the response from the server.
-    contents = ContentSerializer(many=True)
+    # contents = ContentSerializer(many=True)
 
     class Meta:
         model = Revision

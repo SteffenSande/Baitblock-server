@@ -61,6 +61,13 @@ class Differ(object):
         Returns (str):
             String representation of off the diff between two files, merged with the diff.
         """
+        if not self.old_content:
+            self.is_diff = True
+            return self.mark_added(self.new_content)
+        if not self.new_content:
+            self.is_diff = True
+            return self.mark_removed(self.old_content)
+
         dmp = dmp_module.diff_match_patch()
         changes = dmp.diff_main(self.old_content, self.new_content)
         dmp.diff_cleanupSemantic(changes)

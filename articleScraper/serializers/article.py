@@ -35,6 +35,7 @@ class ArticleSerializer(serializers.ModelSerializer):
                 if not same:
                     for index in range(len(last_revision.contents)):
                         if last_revision.contents[index].content != revision.contents[index].content:
+                            # There is a mistake here
                             diff = Differ(last_revision.contents[index].content, revision.contents[index].content).diff
                             diffs.append(diff)
 
