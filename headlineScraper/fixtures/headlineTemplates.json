@@ -10,8 +10,8 @@
         "title": "a.url span",
         "exclude": "[]",
         "list": "[\"ul.news-list-articles\"]",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2017-10-04T19:17:41.027Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2017-10-04T19:17:41.027"
     }
 },
 {
@@ -25,8 +25,8 @@
         "title": "h3",
         "exclude": "[]",
         "list": "[\"ul.content.withDate\"]",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2017-10-04T19:17:41.027Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2017-10-04T19:17:41.027"
     }
 },
 {
@@ -40,8 +40,8 @@
         "title": "h1",
         "exclude": "[\"article.preview.native-advertisment\"]",
         "list": "[]",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2017-10-04T19:17:41.027Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2017-10-04T19:17:41.027"
     }
 },
 {
@@ -55,8 +55,8 @@
         "title": ".article-content",
         "exclude": "[\".df-img-skin-live\"]",
         "list": "[]",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2017-10-04T19:17:41.027Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2017-10-04T19:17:41.027"
     }
 },
 {
@@ -70,8 +70,8 @@
         "title": "h2",
         "exclude": "[]",
         "list": "[]",
-        "created": "2017-12-07T14:25:55.705Z",
-        "modified": "2017-12-07T14:25:55.705Z"
+        "created": "2017-12-07T14:25:55.705",
+        "modified": "2017-12-07T14:25:55.705"
     }
 },
 {
@@ -85,8 +85,8 @@
         "title": "h3",
         "exclude": "[\". jobscroller\", \".df-skin-box-normal\"]",
         "list": "[]",
-        "created": "2017-12-07T22:04:28.400Z",
-        "modified": "2017-12-07T22:14:24.380Z"
+        "created": "2017-12-07T22:04:28.400",
+        "modified": "2017-12-07T22:14:24.380"
     }
 },
 {
@@ -100,8 +100,8 @@
         "title": "h2",
         "exclude": "[]",
         "list": "[]",
-        "created": "2018-05-18T18:44:43.935Z",
-        "modified": "2018-05-18T18:53:42.265Z"
+        "created": "2018-05-18T18:44:43.935",
+        "modified": "2018-05-18T18:53:42.265"
     }
 }
 ]

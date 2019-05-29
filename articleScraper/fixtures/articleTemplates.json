@@ -22,8 +22,8 @@
         "ignore_content_tag": "aside",
         "subscription": ".widget-salesposter",
         "video": "/webtv/",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2018-02-03T13:13:27.021Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2018-02-03T13:13:27.021"
     }
 },
 {
@@ -49,8 +49,8 @@
         "ignore_content_tag": "iframe",
         "subscription": ".widget-salesposter",
         "video": "/webtv/",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2018-02-03T13:11:53.931Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2018-02-03T13:11:53.931"
     }
 },
 {
@@ -76,8 +76,8 @@
         "ignore_content_tag": "",
         "subscription": "div.paywall",
         "video": "/video/",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2018-02-03T13:11:02.580Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2018-02-03T13:11:02.580"
     }
 },
 {
@@ -103,8 +103,8 @@
         "ignore_content_tag": "aside",
         "subscription": "div#paywall",
         "video": "/video/",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2018-02-03T13:06:42.713Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2018-02-03T13:06:42.713"
     }
 },
 {
@@ -130,8 +130,8 @@
         "ignore_content_tag": "",
         "subscription": "",
         "video": "/video/",
-        "created": "2017-12-07T14:39:14.746Z",
-        "modified": "2018-02-03T13:10:26.773Z"
+        "created": "2017-12-07T14:39:14.746",
+        "modified": "2018-02-03T13:10:26.773"
     }
 },
 {
@@ -157,8 +157,8 @@
         "ignore_content_tag": "",
         "subscription": ".paywall-offers",
         "video": "/video/",
-        "created": "2017-12-07T22:03:15.548Z",
-        "modified": "2018-02-03T13:10:32.284Z"
+        "created": "2017-12-07T22:03:15.548",
+        "modified": "2018-02-03T13:10:32.284"
     }
 },
 {
@@ -184,8 +184,8 @@
         "ignore_content_tag": "",
         "subscription": ".access-card.incentive-card",
         "video": "/v/",
-        "created": "2018-05-18T18:45:36.776Z",
-        "modified": "2018-05-18T18:45:36.777Z"
+        "created": "2018-05-18T18:45:36.776",
+        "modified": "2018-05-18T18:45:36.777"
     }
 }
 ]

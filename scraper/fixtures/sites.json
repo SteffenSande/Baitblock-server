@@ -12,8 +12,8 @@
         "current_headline_count_on_front_page": 96,
         "max_headlines_count": 99,
         "urls_is_not_an_article": "[\"/direkte/\", \"/folkivest/\"]",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2018-05-18T18:43:33.283Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2018-05-18T18:43:33.283"
     }
 },
 {
@@ -29,8 +29,8 @@
         "current_headline_count_on_front_page": 94,
         "max_headlines_count": 107,
         "urls_is_not_an_article": "[]",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2018-05-18T18:43:37.827Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2018-05-18T18:43:37.827"
     }
 },
 {
@@ -46,8 +46,8 @@
         "current_headline_count_on_front_page": 208,
         "max_headlines_count": 208,
         "urls_is_not_an_article": "[]",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2018-05-18T18:43:41.586Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2018-05-18T18:43:41.586"
     }
 },
 {
@@ -63,8 +63,8 @@
         "current_headline_count_on_front_page": 131,
         "max_headlines_count": 152,
         "urls_is_not_an_article": "[\"vglive.vg.no\", \"direkte.vg.no\", \"/spesial/\", \"/podcast/\"]",
-        "created": "2017-09-27T20:01:52.998Z",
-        "modified": "2018-05-18T18:43:44.909Z"
+        "created": "2017-09-27T20:01:52.998",
+        "modified": "2018-05-18T18:43:44.909"
     }
 },
 {
@@ -80,8 +80,8 @@
         "current_headline_count_on_front_page": 86,
         "max_headlines_count": 97,
         "urls_is_not_an_article": "[\"radio.nrk.no\", \"tv.nrk.no\"]",
-        "created": "2017-12-07T14:40:54.495Z",
-        "modified": "2018-05-18T18:43:48.405Z"
+        "created": "2017-12-07T14:40:54.495",
+        "modified": "2018-05-18T18:43:48.405"
     }
 },
 {
@@ -97,8 +97,8 @@
         "current_headline_count_on_front_page": 75,
         "max_headlines_count": 75,
         "urls_is_not_an_article": "[]",
-        "created": "2017-12-07T22:05:07.969Z",
-        "modified": "2018-05-18T18:43:52.200Z"
+        "created": "2017-12-07T22:05:07.969",
+        "modified": "2018-05-18T18:43:52.200"
     }
 },
 {
@@ -114,8 +114,8 @@
         "current_headline_count_on_front_page": 57,
         "max_headlines_count": 57,
         "urls_is_not_an_article": "[]",
-        "created": "2018-05-18T18:45:44.184Z",
-        "modified": "2018-05-18T18:54:38.975Z"
+        "created": "2018-05-18T18:45:44.184",
+        "modified": "2018-05-18T18:54:38.975"
     }
 }
 ]
