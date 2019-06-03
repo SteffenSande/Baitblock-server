@@ -9,11 +9,11 @@ from helpers.utilities import find_headline_id
 
 
 class ArticleList(generics.ListCreateAPIView):
-    queryset = Article.objects.all()
     serializer_class = ArticleSerializer
 
     def get_queryset(self):
         pk = int(self.kwargs.get('pk', "-1"))
+        print(pk)
         return Article.objects.articles_on_front_page(pk)
 
 

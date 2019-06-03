@@ -9,6 +9,7 @@ class ArticleManager(models.Manager):
     def articles_on_front_page(self, site_id):
         from scraper.models import NewsSite
         try:
+            print('heeeeeee')
             site = NewsSite.objects.get(id=site_id)
             return self.filter(
                 news_site=site_id)[:site.current_headline_count_on_front_page]
