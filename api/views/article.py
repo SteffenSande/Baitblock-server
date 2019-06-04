@@ -13,7 +13,6 @@ class ArticleList(generics.ListCreateAPIView):
 
     def get_queryset(self):
         pk = int(self.kwargs.get('pk', "-1"))
-        print(pk)
         return Article.objects.articles_on_front_page(pk)
 
 

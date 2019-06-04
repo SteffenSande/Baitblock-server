@@ -35,6 +35,9 @@ class Article(BaseItem):
     def revisions(self):
         return self.revision_set.all()
 
+    @property
+    def diffs(self):
+        return self.diff_set.all()
 
 class ArticleModelAdminForm(forms.ModelForm):
     revisions = forms.MultipleChoiceField()

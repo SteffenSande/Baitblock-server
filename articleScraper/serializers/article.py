@@ -6,7 +6,7 @@ from differ.diff import Differ
 
 class ArticleSerializer(serializers.ModelSerializer):
     revisions = RevisionSerializer(many=True)
-    diffs = serializers.SerializerMethodField()
+    diffs = DiffSerializer(many=True)
 
     class Meta:
         model = Article

@@ -4,7 +4,9 @@ from celery import shared_task
 
 from articleScraper.models.child import Child
 from articleScraper.models.article import Article
+from articleScraper.models.diff import Diff
 from articleScraper.scraper import ArticleScraper
+from differ.diff import Differ
 from headlineScraper.models import Headline
 
 
@@ -101,6 +103,21 @@ def scrape_article(headline: Headline):
                     if old_content[i] != content[i]:
                         same = False
             if not same:
+                for index in range(len(last_revision.contents)):
+                    if index < len(last_revision.contents) and index < len(revision.contents):
+                        if last_revision.contents[index].content != revision.contents[index].content:
+                            diff = Diff(Differ(last_revision.contents[index].content, revision.contents[index].content).diff)
+                            diff.article = article
+                            diff.save()
+                    else:
+                        if len(last_revision.contents) < len(revision.contents):
+                            diff = Diff(Differ('', revision.contnts[index].content).diff)
+                        else:
+                            diff = Diff(Differ(last_revision.contents[index].content, '').diff)
+
+                        diff.article = article
+                        diff.save()
+
                 revision.article = article
                 revision.version = len(article.revisions)
                 revision.save()
