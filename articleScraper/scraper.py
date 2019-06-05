@@ -300,9 +300,6 @@ class ArticleScraper(Scraper):
 
         current_index = 0
         for content in article.find_all(search_for):
-            if 'missedeltaker-eirin-kan-bli-historis' in self.url:
-                print(self.headline)
-                print(content)
             if content.attrs == {}:  # Can later implement exclude tags or include tags.
                 add_nodes_from(current_index, content)
                 current_index = len(content_list)

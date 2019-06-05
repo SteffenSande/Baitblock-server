@@ -102,26 +102,33 @@ def scrape_article(headline: Headline):
                 for i in range(len(old_content)):
                     if old_content[i] != content[i]:
                         same = False
-            if not same:
-                for index in range(len(last_revision.contents)):
-                    if index < len(last_revision.contents) and index < len(revision.contents):
-                        if last_revision.contents[index].content != revision.contents[index].content:
-                            diff = Diff(Differ(last_revision.contents[index].content, revision.contents[index].content).diff)
-                            diff.article = article
-                            diff.save()
-                    else:
-                        if len(last_revision.contents) < len(revision.contents):
-                            diff = Diff(Differ('', revision.contnts[index].content).diff)
-                        else:
-                            diff = Diff(Differ(last_revision.contents[index].content, '').diff)
-
+                        diff = Diff(diff=Differ(old_content[i].content, content[i].content).diff)
                         diff.article = article
                         diff.save()
 
+            if not same:
                 revision.article = article
                 revision.version = len(article.revisions)
                 revision.save()
                 save_content(content_list, revision)
+
+                # for index in range(len(last_revision.contents)):
+                #     if index < len(last_revision.contents) and index < len(revision.contents):
+                #         if last_revision.contents[index].content != revision.contents[index].content:
+                #             diff = Diff(diff=Differ(last_revision.contents[index].content, revision.contents[index].content).diff)
+                #             diff.article = article
+                #             diff.save()
+                #             print(diff)
+                #     else:
+                #         if len(last_revision.contents) < len(revision.contents):
+                #             diff = Diff(diff=Differ('', revision.contents[index].content).diff)
+                #         else:
+                #             diff = Diff(diff=Differ(last_revision.contents[index].content, '').diff)
+                #         diff.article = article
+                #         diff.save()
+                #         print(diff)
+
+
 
     return 'SUCCESS scrape one article'
 
@@ -300,6 +307,9 @@ def scrape_article_with_change(headline, change: str):
                 for i in range(len(old_content)):
                     if old_content[i] != content[i]:
                         same = False
+                        diff = Diff(diff=Differ(old_content[i].content, content[i].content).diff)
+                        diff.article = article
+                        diff.save()
             if not same:
                 revision.article = article
                 revision.version = len(article.revisions)

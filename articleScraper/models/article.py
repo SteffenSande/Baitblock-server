@@ -39,6 +39,7 @@ class Article(BaseItem):
     def diffs(self):
         return self.diff_set.all()
 
+
 class ArticleModelAdminForm(forms.ModelForm):
     revisions = forms.MultipleChoiceField()
 
