@@ -35,7 +35,7 @@ class HeadlineSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Headline
-        exclude = ('created', 'summary')
+        exclude = ('created',)
 
     def get_info(self, obj):
         from articleScraper.models import Article
