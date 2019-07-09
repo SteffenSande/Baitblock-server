@@ -135,7 +135,7 @@ class HeadlineScraper(Scraper):
                         result += self.find_text(list(child.children))
                 else:
                     result += str(child)
-            return result.rstrip()
+            return result
 
     def get_sub_title(self, headline: BeautifulSoup):
         """Extracts the headline sub_title
