@@ -35,4 +35,3 @@ class ArticleImageAdmin(admin.ModelAdmin):
 
     form = ArticleImageModelAdminForm
 
-admin.site.register(ArticleImage, ArticleImageAdmin)

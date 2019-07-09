@@ -30,4 +30,3 @@ class Content(models.Model):
         return self.pos == other.pos and self.tag == other.tag and self.content == other.content
 
 
-admin.site.register(Content)

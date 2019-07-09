@@ -43,4 +43,3 @@ class JournalistAdmin(admin.ModelAdmin):
     form = JournalistModelAdminForm
 
 
-admin.site.register(Journalist, JournalistAdmin)

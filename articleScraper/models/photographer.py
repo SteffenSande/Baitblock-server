@@ -32,4 +32,3 @@ class PhotographerAdmin(admin.ModelAdmin):
     form = PhotographerModelAdminForm
 
 
-admin.site.register(Photographer, PhotographerAdmin)

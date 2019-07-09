@@ -8,4 +8,4 @@ from articleScraper.models.diff import Diff
 class DiffSerializer(serializers.ModelSerializer):
     class Meta:
         model = Diff
-        exclude = ()
+        exclude = ('article',)

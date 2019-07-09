@@ -59,4 +59,3 @@ class RevisionAdmin(admin.ModelAdmin):
     exclude = ('images', 'journalists',)
 
 
-admin.site.register(Revision, RevisionAdmin)

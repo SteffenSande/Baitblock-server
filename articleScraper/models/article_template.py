@@ -37,4 +37,3 @@ class ArticleTemplate(models.Model):
         return "{}".format(self.name)
 
 
-admin.site.register(ArticleTemplate)

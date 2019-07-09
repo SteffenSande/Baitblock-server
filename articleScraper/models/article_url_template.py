@@ -38,4 +38,3 @@ class ArticleUrlTemplate(models.Model):
         ordering = ['placement']
 
 
-admin.site.register(ArticleUrlTemplate)

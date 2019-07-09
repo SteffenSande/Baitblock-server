@@ -82,4 +82,3 @@ class ArticleAdmin(admin.ModelAdmin):
         return Article.objects.filter(headline__id__in=article_query_objects)
 
 
-admin.site.register(Article, ArticleAdmin)
