@@ -252,7 +252,7 @@ def save_content(content_list, revision) -> None:
 
 
 @shared_task(name='Find an article and make a change')
-def scrape_site_for_a_article_of_type_article(headline):
+def scrape_site_for_a_article_of_type_article(headline: any):
     scrape_article(headline)
     scrape_article_with_change(headline, 'This is a change')
     # Need to create a version of the articles content nodes

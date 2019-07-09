@@ -1,16 +1,12 @@
 import re
-
 from bs4 import BeautifulSoup
-
 from articleScraper.models import Article
 from articleScraper.models import ArticleImage
 from articleScraper.models import Revision
 from articleScraper.models.journalist import Journalist
 from articleScraper.models.photographer import Photographer
 from articleScraper.models.content import Content
-
 from headlineScraper.models import Headline
-
 from scraper.scraper import Scraper
 
 
@@ -267,6 +263,7 @@ class ArticleScraper(Scraper):
     def get_content(self, article: BeautifulSoup):
 
         # make it work for Dagbladet first
+        selector = self.parsing_template.selector
         search_for = ['p']
         content_list = []
 

@@ -49,18 +49,24 @@ def scrape_a_site_with_change(site, change: str):
     """
     from headlineScraper.tasks import scrape_headlines_with_change
     headlines = scrape_headlines_with_change(site, change)
-    return headlines
+    scrape_site_for_articles_of_type_article(headlines)
+    return None
 
 
 @shared_task(name='create a test for dagbladet')
-def tdb():
+def test_dag_bladet():
     from scraper.models import NewsSite
     news_sites = NewsSite.objects.all()
     for news_site in news_sites:
         if 'dagbladet' in news_site.name.lower():
-            headlines = create_test_set(news_site, 'This is change')
-            for headline in headlines:
-                scrape_site_for_a_article_of_type_article(headline)
+            create_test_set(news_site, 'This is change')
+
+
+def scrape_site_for_articles_of_type_article(headlines: [any]):
+
+    for headline in headlines:
+        scrape_site_for_a_article_of_type_article(headline)
+    return None
 
 
 @shared_task(name='Create test set for a news site')
@@ -75,5 +81,5 @@ def create_test_set(site, change: str):
         None
     """
     scrape_a_site(site)
-    headlines = scrape_a_site_with_change(site, change)
-    return headlines
+    scrape_a_site_with_change(site, change)
+    return None

@@ -164,7 +164,7 @@ def store_headlines_with_change(headlines_with_rank, site, url_templates, change
         url_templates: Where in the url is the unique id of the article
 
     Returns:
-        None - because we store the objects in the db
+        headlines
     """
     # Creates or updates all headlines
     headlines = []
@@ -199,7 +199,7 @@ def scrape_headlines_with_change(site, change: str):
         change (str): The change we introduce in the article and headlines
 
     Returns:
-        None
+        headlines
 
     """
     scraper = HeadlineScraper(site)
