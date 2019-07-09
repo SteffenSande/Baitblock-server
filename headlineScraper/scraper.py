@@ -70,7 +70,7 @@ class HeadlineScraper(Scraper):
         title = self.get_title(headline)
         url = self.get_url(headline)
         try:
-            article_type = self.get_type(headline.a['href'])
+            article_type = self.get_type(url)
         except TypeError:
             print("TypeError: NoneType object is not subscribable in the article: ", self.news_site)
             print("Take a look at the database and the paper and see if the css selectors are correct.")
