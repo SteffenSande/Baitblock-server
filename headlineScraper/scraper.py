@@ -67,8 +67,8 @@ class HeadlineScraper(Scraper):
                A headline represented as html.
        """
 
-        title = self.get_title(headline)
         url = self.get_url(headline)
+        title = self.get_title(headline)
         try:
             article_type = self.get_type(url)
         except TypeError:
@@ -111,7 +111,28 @@ class HeadlineScraper(Scraper):
         Returns (str): Hopefully the headline title
 
         """
-        return self.get_text(headline, self.parsing_template.title)
+
+        head = list(headline.find(class_='headline').children)
+        result = self.find_text(head).strip()
+        return result
+
+        # return self.get_text(headline, self.parsing_template.title)
+    def find_text(self, headline):
+        if len(headline) == 1:
+            if headline[0].name != 'style':
+                if headline[0].name:
+                    return headline[0].text
+                else:
+                    return headline[0]
+        else:
+            result = ''
+            for child in headline:
+                if child.name:
+                    if child.name != 'style':
+                        result += self.find_text(list(child.children))
+                else:
+                    result += str(child)
+            return result.rstrip()
 
     def get_sub_title(self, headline: BeautifulSoup):
         """Extracts the headline sub_title
