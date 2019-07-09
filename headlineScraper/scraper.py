@@ -74,6 +74,8 @@ class HeadlineScraper(Scraper):
         except TypeError:
             print("TypeError: NoneType object is not subscribable in the article: ", self.news_site)
             print("Take a look at the database and the paper and see if the css selectors are correct.")
+        except KeyError:
+            print("Got keyError when transforming the database live")
         if not title or not url:
             return None
 
