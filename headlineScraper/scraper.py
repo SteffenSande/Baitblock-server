@@ -111,10 +111,13 @@ class HeadlineScraper(Scraper):
         Returns (str): Hopefully the headline title
 
         """
-
-        head = list(headline.find(class_='headline').children)
-        result = self.find_text(head).strip()
-        return result
+        try:
+            head = list(headline.find(self.parsing_template.title).children)
+            result = self.find_text(head).strip()
+            return result
+        except:
+            print('Failed to grab title')
+            return 'Failed to grab title'
 
         # return self.get_text(headline, self.parsing_template.title)
     def find_text(self, headline):
