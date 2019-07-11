@@ -39,8 +39,7 @@ class Differ(object):
         """
         return self.mark(text, "old")
 
-    @staticmethod
-    def mark(text: str, change: str) -> str:
+    def mark(self, text: str, change: str) -> str:
         """
             Encapsulates a text with a fake tag new or old depending on it being new or old.
         Args:
@@ -49,14 +48,21 @@ class Differ(object):
         Returns (str):
             Text representation of a span tag encapsulating the text with the css class
         """
-        return '|' + change + '|' + text + '|' + change + '|'
+        result = ''
+        try:
+            result = '|' + change + '|' + text + '|' + change + '|'
+        except TypeError:
+            print(text)
+            print(change)
+            print(self)
 
+        return result
 
     def create_diff_of_text(self) -> str:
         """
         Merges diff between two strings with the most recent one.
         I.E "You are beautiful" And "You are not ugly." renders to
-        You are <new>not</new> <old>beautiful</old><new>ugly</new>
+        You are |new|not|new| |old|beautiful|old||new|ugly|new|
 
         Returns (str):
             String representation of off the diff between two files, merged with the diff.
