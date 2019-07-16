@@ -69,13 +69,10 @@ class HeadlineScraper(Scraper):
 
         url = self.get_url(headline)
         title = self.get_title(headline)
-        try:
+        if url:
             article_type = self.get_type(url)
-        except TypeError:
-            print("TypeError: NoneType object is not subscribable in the article: ", self.news_site)
-            print("Take a look at the database and the paper and see if the css selectors are correct.")
-        except KeyError:
-            print("Got keyError when transforming the database live")
+        else:
+            article_type = None
         if not title or not url:
             return None
 
@@ -111,31 +108,34 @@ class HeadlineScraper(Scraper):
         Returns (str): Hopefully the headline title
 
         """
-        try:
-            head = list(headline.find(self.parsing_template.title).children)
-            result = self.find_text(head).strip()
-            return result
-        except:
-            print('Failed to grab title')
-            return 'Failed to grab title'
+        content = headline.select_one(self.parsing_template.title)
+        if content:
+            head = list(content.children)
+            return self.find_text(head).strip()
+        else:
+            return None
 
         # return self.get_text(headline, self.parsing_template.title)
+
     def find_text(self, headline):
         if len(headline) == 1:
-            if headline[0].name != 'style':
-                if headline[0].name:
-                    return headline[0].text
+            try:
+                if headline[0].name != 'style':
+                    return headline[0].text.strip() + " "
                 else:
-                    return headline[0]
+                    return ""
+            except Exception as e:
+                return headline[0].strip() + " "
         else:
-            result = ''
+            result = ""
             for child in headline:
                 if child.name:
-                    if child.name != 'style':
-                        result += self.find_text(list(child.children))
+                    # Don't want to look at styling, because style tags include css as a child.
+                    if str(child.name) != 'style':
+                        result += self.find_text(list(child))
                 else:
-                    result += str(child)
-            return result
+                    result += str(child).strip() + " "
+            return result.strip() + " "
 
     def get_sub_title(self, headline: BeautifulSoup):
         """Extracts the headline sub_title
@@ -151,10 +151,11 @@ class HeadlineScraper(Scraper):
         return ''
 
     def get_type(self, url_of_first_a_tag):
-        if self.news_site.base_url in url_of_first_a_tag:
-            if 'video' in url_of_first_a_tag:
-                return Headline.VIDEO
-            else:
-                return Headline.ARTICLE
+        if self.parsing_template.video in url_of_first_a_tag:
+            return Headline.VIDEO
         else:
-            return Headline.EXTERNAL
+            if self.news_site.base_url in url_of_first_a_tag:
+                return Headline.ARTICLE
+            else:
+                return Headline.EXTERNAL
+

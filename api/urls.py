@@ -1,4 +1,3 @@
-from django.conf.urls import url
 from django.urls import path
 from api.views.article import ArticleDetail, ArticleList, ArticleSearch
 from api.views.article_image import ArticleImageList, ArticleImageDetail

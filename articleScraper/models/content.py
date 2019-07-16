@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib import admin
 from articleScraper.models.revision import Revision
 
 

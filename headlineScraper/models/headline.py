@@ -53,6 +53,9 @@ class Headline(BaseItem):
 
     objects = HeadlineManager()
 
+    class Meta:
+        ordering = ('-id',)
+
     def __str__(self):
         return "The headline id: " + str(self.id) + " with revisions: " + str(list(self.revisions));
 
@@ -65,5 +68,8 @@ class Headline(BaseItem):
     def revisions(self):
         return self.headlinerevision_set.all()
 
+    @property
+    def diffs(self):
+        return self.diff_set.all()
 
 admin.site.register(Headline, HeadlineAdmin)

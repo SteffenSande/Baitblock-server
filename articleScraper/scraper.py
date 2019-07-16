@@ -261,14 +261,9 @@ class ArticleScraper(Scraper):
         return False
 
     def get_content(self, article: BeautifulSoup):
-
-        # make it work for Dagbladet first
-        selector = self.parsing_template.selector
-        search_for = ['p']
+        content_div = article.select_one(self.parsing_template.content)
+        search_for = self.parsing_template.search_for
         content_list = []
-
-        # Det er nok lurt å legge til posisjonen slik at du har noe å gå igjennom med etterpå.
-        # Kan slippe det seinere eller du henter jo ut listen med alle content noder og da ligger posisjon der enda.
 
         def add_nodes_from(pos, node):
             """
@@ -296,9 +291,10 @@ class ArticleScraper(Scraper):
                 return pos + 1
 
         current_index = 0
-        for content in article.find_all(search_for):
-            if content.attrs == {}:  # Can later implement exclude tags or include tags.
+        if content_div:
+            for content in content_div.select(search_for):
                 add_nodes_from(current_index, content)
                 current_index = len(content_list)
 
+        # Subscription stories can't be scraped because the information is not there.
         return content_list

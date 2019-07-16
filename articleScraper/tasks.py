@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from celery import shared_task
 
 from articleScraper.models.child import Child
+from articleScraper.models.change import Change
 from articleScraper.models.article import Article
 from articleScraper.models.diff import Diff
 from articleScraper.scraper import ArticleScraper
@@ -37,9 +38,10 @@ def scrape_articles(site):
             not_an_article(headline)
         elif any(not_url in headline.url for not_url in headline.news_site.urls_is_not_an_article):
             not_an_article(headline)
+        elif headline.url_id == "":
+            not_an_article(headline)
         else:
             scrape_article(headline)
-
     return 'SUCCESS'
 
 
@@ -52,11 +54,15 @@ def not_an_article(headline):
     Returns:
         None
     """
+    return
 
-    article = Article(headline=headline,
-                      news_site=headline.news_site)
-    Article.objects.update_or_create(headline=headline, defaults=article.update_or_create_defaults())
-    return 'SUCCESS created an article object even though it should\'t be supported'
+
+def is_content(content_object):
+    content = content_object.content
+    if content:
+        return content
+    else:
+        return
 
 
 @shared_task(name="Scrape one article")
@@ -78,59 +84,14 @@ def scrape_article(headline: Headline):
 
         article, created = Article.objects.update_or_create(headline=article.headline,
                                                             defaults=article.update_or_create_defaults())
-
-        if len(article.revisions) is 0:
-            revision.article = article
-            revision.version = 0
-            revision.save()
-            save_content(content_list, revision)
-
-        else:
-            revisions = list(article.revisions)
-            revisions.sort(key=lambda rev: rev.version, reverse=True)
-            last_revision = revisions[0]
-            content = list(map(lambda x: x[0], content_list))
-            content.sort(key=lambda content_node: content_node.pos)
-            old_content = list(last_revision.contents)
-            old_content.sort(key=lambda content_node: content_node.pos)
-            # Create a boolean value that if it changes value we know that the content has been altered
-            # and therefore save it as a new revision
-            same = True
-            if len(old_content) != len(content):
-                same = False
-            else:
-                for i in range(len(old_content)):
-                    if old_content[i] != content[i]:
-                        same = False
-                        diff = Diff(diff=Differ(old_content[i].content, content[i].content).diff)
-                        diff.article = article
-                        diff.save()
-
-            if not same:
-                revision.article = article
-                revision.version = len(article.revisions)
-                revision.save()
-                save_content(content_list, revision)
-
-                # for index in range(len(last_revision.contents)):
-                #     if index < len(last_revision.contents) and index < len(revision.contents):
-                #         if last_revision.contents[index].content != revision.contents[index].content:
-                #             diff = Diff(diff=Differ(last_revision.contents[index].content, revision.contents[index].content).diff)
-                #             diff.article = article
-                #             diff.save()
-                #             print(diff)
-                #     else:
-                #         if len(last_revision.contents) < len(revision.contents):
-                #             diff = Diff(diff=Differ('', revision.contents[index].content).diff)
-                #         else:
-                #             diff = Diff(diff=Differ(last_revision.contents[index].content, '').diff)
-                #         diff.article = article
-                #         diff.save()
-                #         print(diff)
+        store_if_changed(article, revision, content_list)
 
 
-
-    return 'SUCCESS scrape one article'
+def store_revision(revision, article, content_list):
+    revision.article = article
+    revision.version = len(article.revisions)
+    revision.save()
+    save_content(content_list, revision)
 
 
 def add_article_journalists(revision, journalists):
@@ -227,6 +188,7 @@ def save_content(content_list, revision) -> None:
     It also creates a foreign key to Content from child
     This allows you to use a content node to grab all children nodes
     This makes it possible to recreate the HTML structure from the database
+    Does not save subscription articles
 
     Args:
         content_list ((str, [int])): (content, children_id_list)
@@ -235,20 +197,20 @@ def save_content(content_list, revision) -> None:
     Returns:
         None
     """
-
-    visited = [False] * len(content_list)
-    for content, children in content_list:
-        if not visited[content.pos]:
-            visited[content.pos] = True
-            content.revision = revision
-            content.save()
-            for child in children:
-                if not visited[child]:
-                    visited[child] = True
-                    child_content = content_list[child][0]
-                    child_content.revision = revision
-                    child_content.save()
-                    Child(content=content, child=child)
+    if not revision.subscription:
+        visited = [False] * len(content_list)
+        for content, children in content_list:
+            if not visited[content.pos]:
+                visited[content.pos] = True
+                content.revision = revision
+                content.save()
+                for child in children:
+                    if not visited[child]:
+                        visited[child] = True
+                        child_content = content_list[child][0]
+                        child_content.revision = revision
+                        child_content.save()
+                        Child(content=content, child=child)
 
 
 @shared_task(name='Find an article and make a change')
@@ -258,6 +220,90 @@ def scrape_site_for_a_article_of_type_article(headline: any):
     # Need to create a version of the articles content nodes
 
     return "Scraped article: " + str(headline)
+
+
+def store_if_changed(article, revision, content_list):
+    if len(article.revisions) is 0:
+        revision.article = article
+        revision.version = 0
+        revision.save()
+        save_content(content_list, revision)
+
+    else:
+        revisions = list(article.revisions)
+        revisions.sort(key=lambda rev: rev.version, reverse=True)
+        last_revision = revisions[0]
+
+        content = list(map(lambda x: x[0], content_list))
+        content.sort(key=lambda content_node: content_node.pos)
+        content = list(filter(lambda x: x, map(is_content, list(content))))
+
+        old_content = list(last_revision.contents)
+        old_content.sort(key=lambda content_node: content_node.pos)
+        old_content = list(filter(lambda x: x, map(is_content, list(old_content))))
+
+        # Create a boolean value that if it changes value we know that the content has been altered
+        # and therefore save it as a new revision
+
+        same = True
+        for i in range(min(len(old_content), len(content))):
+            if old_content[i] != content[i]:
+                if same:
+                    same = False
+                    store_revision(revision, article, content_list)
+                # Create and store a diff object and hoot
+                diff_model = Diff()
+                diff_model.revision = revision
+                diff_model.save()
+
+                # Store diff changes
+                diff = Differ(old_content[i], content[i])
+                changes = diff.create_diff_of_text()
+                for index, (type_of_change, text) in enumerate(changes):
+                    change = Change(type_of_change=type_of_change, text=text)
+                    change.diff = diff_model
+                    change.pos = index
+                    change.title = True
+                    change.save()
+
+        if len(content) > len(old_content):
+            if same:
+                same = False
+                store_revision(revision, article, content_list)
+            for i in range(len(old_content), len(content)):
+                # Create and store a diff object and hoot
+                diff_model = Diff()
+                diff_model.revision = revision
+                diff_model.save()
+
+                # Store diff changes
+                diff = Differ("", content[i])
+                changes = diff.create_diff_of_text()
+                for index, (type_of_change, text) in enumerate(changes):
+                    change = Change(type_of_change=type_of_change, text=text)
+                    change.diff = diff_model
+                    change.pos = index
+                    change.save()
+        if len(content) < len(old_content):
+            if same:
+                same = False
+                store_revision(revision, article, content_list)
+            for i in range(len(old_content), len(content)):
+                # Create and store a diff object and hoot
+                diff_model = Diff()
+                diff_model.revision = revision
+                diff_model.save()
+
+                # Store diff changes
+                diff = Differ(old_content[i], "")
+                changes = diff.create_diff_of_text()
+                for index, (type_of_change, text) in enumerate(changes):
+                    change = Change(type_of_change=type_of_change, text=text)
+                    change.diff = diff_model
+                    change.pos = index
+                    change.save()
+    return 'SUCCESS scrape one article'
+
 
 @shared_task(name="Scrape one article with changes")
 def scrape_article_with_change(headline, change: str):
@@ -284,36 +330,6 @@ def scrape_article_with_change(headline, change: str):
             if content.content:
                 content.content = change
 
-        if len(article.revisions) is 0:
-            revision.article = article
-            revision.version = 0
-            revision.save()
-            save_content(content_list, revision)
-
-        else:
-            revisions = list(article.revisions)
-            revisions.sort(key=lambda rev: rev.version, reverse=True)
-            last_revision = revisions[0]
-            content = list(map(lambda x: x[0], content_list))
-            content.sort(key=lambda content_node: content_node.pos)
-            old_content = list(last_revision.contents)
-            old_content.sort(key=lambda content_node: content_node.pos)
-            # Create a boolean value that if it changes value we know that the content has been altered
-            # and therefore save it as a new revision
-            same = True
-            if len(old_content) != len(content):
-                same = False
-            else:
-                for i in range(len(old_content)):
-                    if old_content[i] != content[i]:
-                        same = False
-                        diff = Diff(diff=Differ(old_content[i].content, content[i].content).diff)
-                        diff.article = article
-                        diff.save()
-            if not same:
-                revision.article = article
-                revision.version = len(article.revisions)
-                revision.save()
-                save_content(content_list, revision)
+        store_if_changed(article, revision, content_list)
 
     return 'SUCCESS scrape one article'

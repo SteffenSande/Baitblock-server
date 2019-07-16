@@ -4,14 +4,16 @@ import datetime
 import sys
 
 from celery import shared_task
-from hyperlink._url import NoneType
 
+from differ.diff import Differ
 from helpers.utilities import text_differ
 
 from helpers.utilities import format_url_for_site, find_headline_id
 from headlineScraper.scraper import HeadlineScraper
 from headlineScraper.models import Headline
 from headlineScraper.models.revision import HeadlineRevision
+from headlineScraper.models.diff import Diff as Diff_Model
+from headlineScraper.models.change import Change
 from articleScraper.models import ArticleUrlTemplate
 from django.db import IntegrityError
 
@@ -71,8 +73,10 @@ def store_headlines(headlines_with_rank, site, url_templates):
     added_ids = []
 
     for revision, headline, rank, article_type in headlines_with_rank:
+
         # Check if revision title or subtitle is different than revision
         headline_id = find_headline_id(headline.url, url_templates)  # Finds id of headline
+
         try:
             headline = store_headline(headline_id, headline, revision, article_type, site, added_ids)
         except Headline.DoesNotExist:
@@ -115,6 +119,7 @@ def store_headline(headline_id, headline, revision, article_type, site, added_id
     headline.category = article_type
     headline.url = new_url
     headline.save()
+
     if headline.url_id not in added_ids:
         # Revision is none only when we cannot locate the title of the headline
         added_ids.append(headline.url_id)
@@ -124,13 +129,39 @@ def store_headline(headline_id, headline, revision, article_type, site, added_id
 
         if text_differ(last_revision.title, revision.title) \
                 or text_differ(last_revision.sub_title, revision.sub_title):
-                    # Save new URL
+
             headline.save()
+
             # Save new revision
             revision.headline = headline
             revision.version = len(headline.revisions) + 1
             revision.save()
 
+            # Store new diff
+            diff_model = Diff_Model()
+            diff_model.headline = headline
+            diff_model.save()
+
+            # Store diff changes - title
+            diff = Differ(last_revision.title, revision.title)
+            changes = diff.create_diff_of_text()
+            for index, (type_of_change, text) in enumerate(changes):
+                change = Change(type_of_change=type_of_change, text=text)
+                change.diff = diff_model
+                change.pos = index
+                change.title = True
+                change.save()
+
+            # Store diff changes - subtitle
+            diff = Differ(last_revision.sub_title, revision.sub_title)
+            changes = diff.create_diff_of_text()
+
+            for index, (type_of_change, text) in enumerate(changes):
+                change = Change(type_of_change=type_of_change, text=text)
+                change.diff = diff_model
+                change.pos = index
+                change.title = False
+                change.save()
     return headline
 
 
@@ -150,6 +181,27 @@ def store_new_headline(revision, headline, article_type):
     revision.headline = headline
     revision.version = 1
     revision.save()
+
+    # There needs to be a diff that only contains the first headline
+    diff_model = Diff_Model()
+    diff_model.headline = headline
+    diff_model.save()
+
+    # Store diff changes
+    # Type 0 is normal text
+    # Position is 0 cause we always star counting at 0
+
+    change = Change(type_of_change=0, text=revision.title, title=True)
+    change.diff = diff_model
+    change.pos = 0
+    change.title = True
+    change.save()
+
+    change = Change(type_of_change=0, text=revision.sub_title, title=False)
+    change.diff = diff_model
+    change.pos = 0
+    change.title = False
+    change.save()
     return headline
 
 
@@ -190,6 +242,7 @@ def store_headlines_with_change(headlines_with_rank, site, url_templates, change
         rank.save()
     return headlines
 
+
 @shared_task(name='Download all the headlines with a change in them')
 def scrape_headlines_with_change(site, change: str):
     """Download the headlines and introduce a change in them and see if the system detects the change
@@ -206,9 +259,6 @@ def scrape_headlines_with_change(site, change: str):
     headlines_with_rank = scraper.scrape()
     url_templates = ArticleUrlTemplate.objects.filter(news_site=site)
     return store_headlines_with_change(headlines_with_rank, site, url_templates, change)
-
-
-
 
 
 @shared_task(name='Download a article that is of type article and create a test version that has a change in it')

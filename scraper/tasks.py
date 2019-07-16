@@ -2,7 +2,8 @@ from __future__ import absolute_import, unicode_literals
 from datetime import timedelta
 from celery import shared_task
 from celery.task import periodic_task
-from articleScraper.tasks import scrape_site_for_a_article_of_type_article
+from articleScraper.tasks import scrape_site_for_a_article_of_type_article, scrape_articles, scrape_article
+from headlineScraper.tasks import scrape_headlines, scrape_headlines_with_change
 
 
 @periodic_task(
@@ -58,8 +59,8 @@ def test_dag_bladet():
     from scraper.models import NewsSite
     news_sites = NewsSite.objects.all()
     for news_site in news_sites:
-        if 'dagbladet' in news_site.name.lower():
-            create_test_set(news_site, 'This is change')
+        if 'verdens gang' in news_site.name.lower() or 'dagbladet' in news_site.name.lower():
+            create_test_set(news_site, 'This is a change.')
 
 
 def scrape_site_for_articles_of_type_article(headlines: [any]):
@@ -83,3 +84,14 @@ def create_test_set(site, change: str):
     scrape_a_site(site)
     scrape_a_site_with_change(site, change)
     return None
+
+@shared_task(name='Create test set for only headlines of dagbladet')
+def create_test_set_for_headlines_only_dagbladet():
+    from scraper.models import NewsSite
+    news_sites = NewsSite.objects.all()
+    for news_site in news_sites:
+        if 'dagbladet' in news_site.name.lower():
+            # Begin with this is change cause it makes the testing more intuitive
+            scrape_headlines(news_site)
+
+

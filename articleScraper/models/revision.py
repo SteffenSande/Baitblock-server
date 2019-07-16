@@ -7,15 +7,19 @@ from helpers.base_models import RevisionBase
 
 class Revision(RevisionBase):
     class Meta:
-        ordering = ('-version',)
+        ordering = ('version',)
 
     article = models.ForeignKey(Article, on_delete=models.CASCADE, )
+    title = models.TextField()
+    sub_title = models.TextField()
     journalists = models.ManyToManyField('articleScraper.Journalist')
     images = models.ManyToManyField('articleScraper.ArticleImage')
 
     words = models.IntegerField()
     subscription = models.BooleanField(default=False)
-    # Could move the diff to this model as a field with diff makes little to no sense.
+    @property
+    def diffs(self):
+        return self.diff_set.all()
 
     @property
     def contents(self):

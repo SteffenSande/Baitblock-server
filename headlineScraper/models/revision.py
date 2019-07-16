@@ -13,6 +13,11 @@ class HeadlineRevisionAdmin(admin.ModelAdmin):
 
 class HeadlineRevision(RevisionBase):
     headline = models.ForeignKey(Headline, on_delete=models.CASCADE)
+    title = models.TextField()
+    sub_title = models.TextField()
+
+    class Meta:
+        ordering = ('version',)
 
 
 admin.site.register(HeadlineRevision, HeadlineRevisionAdmin)

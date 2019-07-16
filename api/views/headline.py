@@ -3,7 +3,7 @@ from rest_framework.response import Response
 
 from api.views.mixins import MultipleFieldLookupMixin
 from headlineScraper.models import Headline
-from headlineScraper.serializers import HeadlineSerializer, HeadlineListSerializer
+from headlineScraper.serializers.headline import HeadlineSerializer, HeadlineListSerializer
 
 
 class HeadlineList(generics.ListCreateAPIView):

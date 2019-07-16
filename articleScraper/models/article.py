@@ -9,7 +9,6 @@ class ArticleManager(models.Manager):
     def articles_on_front_page(self, site_id):
         from scraper.models import NewsSite
         try:
-            print('heeeeeee')
             site = NewsSite.objects.get(id=site_id)
             return self.filter(
                 news_site=site_id)[:site.current_headline_count_on_front_page]
@@ -25,6 +24,9 @@ class Article(BaseItem):
     )
     objects = ArticleManager()
 
+    class Meta:
+        ordering = ('-headline',)
+
     def __str__(self):
         return '{}'.format(self.headline.__str__())
 
@@ -34,10 +36,6 @@ class Article(BaseItem):
     @property
     def revisions(self):
         return self.revision_set.all()
-
-    @property
-    def diffs(self):
-        return self.diff_set.all()
 
 
 class ArticleModelAdminForm(forms.ModelForm):
@@ -80,5 +78,3 @@ class ArticleAdmin(admin.ModelAdmin):
                 for x in Article.objects.articles_on_front_page(site.id)
             ]
         return Article.objects.filter(headline__id__in=article_query_objects)
-
-

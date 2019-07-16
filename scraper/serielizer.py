@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from articleScraper.serializers.articleTemplate import ArticleTemplateSerializer
-from headlineScraper.serializers import HeadlineTemplateSerializer
+from headlineScraper.serializers.headline import HeadlineTemplateSerializer
 from scraper.models import NewsSite
 
 

@@ -15,7 +15,8 @@ class ArticleTemplate(models.Model):
     title = models.CharField(max_length=255)
     sub_title = models.CharField(max_length=255)
     content = models.CharField(max_length=255)
-    selector = models.CharField(max_length=255, default='article')
+    search_for = models.CharField(max_length=255, default='p')
+
     published = models.CharField(max_length=255)
     updated = models.CharField(max_length=255)
     datetime_attribute = models.CharField(max_length=255, blank=True)
@@ -28,8 +29,6 @@ class ArticleTemplate(models.Model):
     photograph_ignore_text = ArrayField(models.CharField(max_length=255, blank=True), default=list, blank=True)
     ignore_content_tag = models.CharField(max_length=255, blank=True)
     subscription = models.CharField(max_length=255, blank=True)
-    video = models.CharField(max_length=255, blank=True)
-
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 

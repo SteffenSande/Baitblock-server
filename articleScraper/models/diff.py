@@ -1,16 +1,17 @@
 from django.db import models
 
-from articleScraper.models import Article
+from articleScraper.models import Revision
 
 
 class Diff(models.Model):
     """ A model that represents the relationship between the content nodes """
-    diff = models.TextField(default=None, null=True)
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
+
+    revision = models.ForeignKey(Revision, on_delete=models.CASCADE)
+
+    @property
+    def changes(self):
+        return self.change_set.all()
 
     class Meta:
-        ordering = ('article',)
+        ordering = ('id',)
 
-    def __str__(self):
-        result = 'The diff is ' + str(self.diff) + ' is connected to article with id: ' + str(self.article)
-        return result

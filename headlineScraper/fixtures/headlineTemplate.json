@@ -12,8 +12,7 @@
         "list": "[\"ul.news-list-articles\"]",
         "created": "2017-09-27T20:01:52.998",
         "modified": "2017-10-04T19:17:41.027",
-        "feed": null,
-        "video": "/video/"
+        "feed": null
     }
 },
 {
@@ -29,8 +28,7 @@
         "list": "[\"ul.content.withDate\"]",
         "created": "2017-09-27T20:01:52.998",
         "modified": "2017-10-04T19:17:41.027",
-        "feed": null,
-        "video": "/video/"
+        "feed": null
     }
 },
 {
@@ -45,9 +43,8 @@
         "exclude": "[\"article.preview.native-advertisment\"]",
         "list": "[]",
         "created": "2017-09-27T20:01:52.998",
-        "modified": "2019-07-16T14:41:11.917",
-        "feed": "/studio/",
-        "video": "/video/"
+        "modified": "2019-07-14T14:54:21.872",
+        "feed": "/studio/"
     }
 },
 {
@@ -62,9 +59,8 @@
         "exclude": "[\".df-img-skin-live\"]",
         "list": "[]",
         "created": "2017-09-27T20:01:52.998",
-        "modified": "2019-07-16T14:48:36.533",
-        "feed": "/nyhetsdognet/",
-        "video": "/video/"
+        "modified": "2019-07-14T14:54:06.119",
+        "feed": "/nyhetsdognet/"
     }
 },
 {
@@ -80,8 +76,7 @@
         "list": "[]",
         "created": "2017-12-07T14:25:55.705",
         "modified": "2017-12-07T14:25:55.705",
-        "feed": null,
-        "video": "/video/"
+        "feed": null
     }
 },
 {
@@ -97,8 +92,7 @@
         "list": "[]",
         "created": "2017-12-07T22:04:28.400",
         "modified": "2017-12-07T22:14:24.380",
-        "feed": null,
-        "video": "/video/"
+        "feed": null
     }
 },
 {
@@ -114,8 +108,7 @@
         "list": "[]",
         "created": "2018-05-18T18:44:43.935",
         "modified": "2018-05-18T18:53:42.265",
-        "feed": null,
-        "video": "/video/"
+        "feed": null
     }
 }
 ]

@@ -19,6 +19,8 @@ class HeadlineTemplate(models.Model):
     list = ArrayField(models.CharField(max_length=255, blank=True), default=list, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+    feed = models.CharField(default=None, null=True, max_length=255)
+    video = models.CharField(default='/video/', max_length=255)
 
     def __str__(self):
         return "{}".format(self.name)

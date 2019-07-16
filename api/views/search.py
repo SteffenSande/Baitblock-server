@@ -3,7 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from articleScraper.models import ArticleUrlTemplate
 from headlineScraper.models import Headline
-from headlineScraper.serializers import HeadlineSerializer
+from headlineScraper.serializers.headline import HeadlineSerializer
 from helpers.utilities import extract_hostname, find_headline_id
 from scraper.models import NewsSite
 

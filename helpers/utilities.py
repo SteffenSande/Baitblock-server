@@ -135,6 +135,7 @@ def find_headline_id(headline_url, url_templates):
 
         Returns (str): The id portion of the url or empty string.
     """
+    # ToDo
     url = headline_url.split('/')
 
     # Iterate thorough all url tempaltes for that site
@@ -145,19 +146,20 @@ def find_headline_id(headline_url, url_templates):
             url_id = url_id.split(url_template.id_separator)[-1]
 
         if len(url_id) == url_template.id_length:
+            return url_id
 
             # Checks id type
-            if url_template.id_type == ArticleUrlTemplate.ALPHA_NUMERIC:
-                if url_id.isalnum():
-                    return url_id
-            elif url_template.id_type == ArticleUrlTemplate.LETTERS_ONLY:
-                if url_id.isalpha():
-                    return url_id
-            elif url_template.id_type == ArticleUrlTemplate.NUMBERS_ONLY:
-                if string_is_number(url_id):
-                    return url_id
-            elif url_template.id_type == ArticleUrlTemplate.OTHER:
-                return url_id
+            #if url_template.id_type == ArticleUrlTemplate.ALPHA_NUMERIC:
+            #    if url_id.isalnum():
+            #        return url_id
+            #elif url_template.id_type == ArticleUrlTemplate.LETTERS_ONLY:
+            #    if url_id.isalpha():
+            #        return url_id
+            #elif url_template.id_type == ArticleUrlTemplate.NUMBERS_ONLY:
+            #    if string_is_number(url_id):
+            #        return url_id
+            #elif url_template.id_type == ArticleUrlTemplate.OTHER:
+            #    return url_id
 
     # No match...
     return ""
