@@ -9,10 +9,7 @@ class ArticleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        exclude = (
-            'created',
-            'modified',
-        )
+        fields = '__all__'
 
     def get_url(self,obj):
         url = obj.headline.url

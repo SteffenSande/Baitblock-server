@@ -7,4 +7,4 @@ class ArticleTemplateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ArticleTemplate
-        exclude = ('created', 'modified',)
+        fields = '__all__'

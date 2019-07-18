@@ -5,8 +5,6 @@ from helpers.base_models import BaseItem
 
 
 class HeadlineAdmin(admin.ModelAdmin):
-    readonly_fields = ('created', )
-
     list_filter = [
         'news_site',
     ]

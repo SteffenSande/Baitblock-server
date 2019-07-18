@@ -1,4 +1,7 @@
+import datetime
 import re
+
+import pytz
 from bs4 import BeautifulSoup
 from articleScraper.models import Article
 from articleScraper.models import ArticleImage
@@ -66,8 +69,6 @@ class ArticleScraper(Scraper):
 
         title = self.get_title(article)
         sub_title = self.get_sub_title(article)
-        published = self.get_published(article)
-        updated = self.get_updated(article)
         words = self.get_words(article)
         journalists = self.get_journalist(article)
         images = self.get_images(article)
@@ -77,12 +78,7 @@ class ArticleScraper(Scraper):
         if not title:
             title = self.headline.revisions[0].title
 
-        if updated:
-            time = updated
-        else:
-            time = published
-
-        revision = Revision(timestamp=time, title=title, sub_title=sub_title, words=words, subscription=subscription)
+        revision = Revision(timestamp=datetime.datetime.now(pytz.timezone("Europe/Oslo")), title=title, sub_title=sub_title, words=words, subscription=subscription)
 
         article = Article(news_site=self.news_site, headline=self.headline)
 
@@ -219,24 +215,6 @@ class ArticleScraper(Scraper):
                    A article represented as html.
         """
         return self.get_text(article, self.parsing_template.sub_title)
-
-    def get_published(self, article: BeautifulSoup):
-        """
-           Extracts the articles published date
-           Args:
-               article (BeautifulSoup4):
-                   A article represented as html.
-        """
-        return self.get_datetime(article, self.parsing_template.published)
-
-    def get_updated(self, article: BeautifulSoup):
-        """
-           Extracts the articles updated date
-           Args:
-               article (BeautifulSoup4):
-                   A article represented as html.
-       """
-        return self.get_datetime(article, self.parsing_template.updated)
 
     def get_subscription(self, article: BeautifulSoup):
         """

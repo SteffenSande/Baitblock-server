@@ -14,7 +14,6 @@ class NewsSite(models.Model):
     """
     headlineTemplate = models.ForeignKey('headlineScraper.HeadlineTemplate', on_delete=models.CASCADE, )
     articleTemplate = models.ForeignKey('articleScraper.ArticleTemplate', on_delete=models.CASCADE, )
-
     name = models.CharField(max_length=255, unique=True)
     abbreviation = models.CharField(max_length=255)
     base_url = models.CharField(max_length=255, unique=True)
@@ -22,7 +21,6 @@ class NewsSite(models.Model):
     current_headline_count_on_front_page = models.IntegerField(default=0)
     max_headlines_count = models.IntegerField(default=0)
     urls_is_not_an_article = ArrayField(models.CharField(max_length=255, blank=True), default=list, blank=True)
-
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 

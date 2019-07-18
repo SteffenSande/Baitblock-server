@@ -54,13 +54,7 @@ class ArticleModelAdminForm(forms.ModelForm):
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    readonly_fields = (
-        'created',
-        'modified',
-    )
-
     list_filter = ['news_site']
-
     form = ArticleModelAdminForm
 
     def get_queryset(self, request):

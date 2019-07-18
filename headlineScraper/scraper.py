@@ -67,6 +67,8 @@ class HeadlineScraper(Scraper):
                A headline represented as html.
        """
 
+        from pytz import timezone
+
         url = self.get_url(headline)
         title = self.get_title(headline)
         if url:
@@ -78,7 +80,7 @@ class HeadlineScraper(Scraper):
 
         sub_title = self.get_sub_title(headline)
         rank = Rank(placement=len(self.headlines) + 1, of_total=0)
-        revision = HeadlineRevision(title=title, sub_title=sub_title, timestamp=datetime.datetime.now())
+        revision = HeadlineRevision(title=title, sub_title=sub_title, timestamp=datetime.datetime.now(timezone('Europe/Oslo')))
         head = Headline(news_site=self.news_site, url=url)
         return revision, head, rank, article_type
 
