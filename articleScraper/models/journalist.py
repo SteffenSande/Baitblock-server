@@ -2,11 +2,13 @@ from django import forms
 from django.contrib import admin
 from django.db import models
 
+from newsSite.models import NewsSite
+
 
 class Journalist(models.Model):
     firstName = models.CharField(max_length=255)
     lastName = models.CharField(max_length=255)
-    news_site = models.ForeignKey('scraper.NewsSite', on_delete=models.CASCADE)
+    news_site = models.ForeignKey(NewsSite, on_delete=models.CASCADE)
 
     def __str__(self):
         return '{} {}'.format(self.firstName, self.lastName)

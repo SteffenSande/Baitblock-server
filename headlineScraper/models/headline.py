@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.db import models
 
 from helpers.base_models import BaseItem
+from newsSite.models import NewsSite
 
 
 class HeadlineAdmin(admin.ModelAdmin):
@@ -20,7 +21,6 @@ class HeadlineManager(models.Manager):
                   This is not good pratise and i will therefore change this.
 
         """
-        from scraper.models import NewsSite
         try:
             site = NewsSite.objects.get(id=site_id)
             return self.filter(

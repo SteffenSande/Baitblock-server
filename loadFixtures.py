@@ -4,7 +4,7 @@ import os
 urls = 'articleScraper/fixtures/urlTemplates.json'
 articles = 'articleScraper/fixtures/articleTemplates.json'
 headlines = 'headlineScraper/fixtures/*'
-scraper = 'scraper/fixtures/*'
+scraper = 'newsSite/fixtures/*'
 comand = './manage.py loaddata '
 
 os.system(comand + articles)

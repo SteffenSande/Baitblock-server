@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from api.views.mixins import MultipleFieldLookupMixin
 from articleScraper.models import Article, ArticleUrlTemplate
 from articleScraper.serializers import ArticleSerializer
-from scraper.models import NewsSite
 from helpers.utilities import find_headline_id
+from newsSite.models import NewsSite
 
 
 class ArticleList(generics.ListCreateAPIView):

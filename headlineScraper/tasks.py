@@ -5,7 +5,7 @@ import sys
 
 from celery import shared_task
 
-from differ.diff import Differ
+from helpers.diff import Differ
 from helpers.utilities import text_differ
 
 from helpers.utilities import format_url_for_site, find_headline_id

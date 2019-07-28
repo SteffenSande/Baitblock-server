@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.db import models
 
+from newsSite.models import NewsSite
+
 
 class ArticleUrlTemplate(models.Model):
     """
@@ -19,7 +21,7 @@ class ArticleUrlTemplate(models.Model):
         (OTHER, 'Other'),
     )
 
-    news_site = models.ForeignKey("scraper.NewsSite", on_delete=models.CASCADE,)
+    news_site = models.ForeignKey(NewsSite, on_delete=models.CASCADE,)
 
     name = models.CharField(max_length=255)
     id_position = models.IntegerField()

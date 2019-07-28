@@ -1,7 +1,7 @@
 from rest_framework import generics
 
-from scraper.models import NewsSite
-from scraper.serielizer import NewsSiteSerializer
+from newsSite.models import NewsSite
+from newsSite.serielizer import NewsSiteSerializer
 
 
 class SiteList(generics.ListCreateAPIView):

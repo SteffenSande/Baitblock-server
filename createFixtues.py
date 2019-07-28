@@ -9,7 +9,7 @@ example = './manage.py dumpdata scraper.NewsSite > scraper/fixtures/sites.json -
 fixture = '/fixtures'
 article = 'articleScraper'
 headline = 'headlineScraper'
-site = 'scraper' 
+site = 'scraper'
 
 
 

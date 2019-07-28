@@ -10,7 +10,7 @@ from articleScraper.models.journalist import Journalist
 from articleScraper.models.photographer import Photographer
 from articleScraper.models.content import Content
 from headlineScraper.models import Headline
-from scraper.scraper import Scraper
+from helpers.scraper import Scraper
 
 
 class ArticleScraper(Scraper):

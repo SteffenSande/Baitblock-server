@@ -7,8 +7,8 @@ from articleScraper.models.change import Change
 from articleScraper.models.article import Article
 from articleScraper.models.diff import Diff
 from articleScraper.scraper import ArticleScraper
-from differ.diff import Differ
 from headlineScraper.models import Headline
+from helpers.diff import Differ
 
 
 @shared_task(name='Scrape articles')

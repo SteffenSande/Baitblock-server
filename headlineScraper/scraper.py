@@ -6,8 +6,8 @@ from headlineScraper.models import Headline
 from headlineScraper.models import Rank
 from headlineScraper.models.revision import HeadlineRevision
 from helpers.utilities import format_url_for_site
-from scraper.models import NewsSite
-from scraper.scraper import Scraper
+from helpers.scraper import Scraper
+from newsSite.models import NewsSite
 
 
 class HeadlineScraper(Scraper):

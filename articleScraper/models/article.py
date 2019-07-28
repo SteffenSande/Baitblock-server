@@ -3,11 +3,11 @@ from django.contrib import admin
 from django.db import models
 
 from helpers.base_models import BaseItem
+from newsSite.models import NewsSite
 
 
 class ArticleManager(models.Manager):
     def articles_on_front_page(self, site_id):
-        from scraper.models import NewsSite
         try:
             site = NewsSite.objects.get(id=site_id)
             return self.filter(
@@ -25,7 +25,7 @@ class Article(BaseItem):
     objects = ArticleManager()
 
     class Meta:
-        ordering = ('-headline',)
+        ordering = ('headline',)
 
     def __str__(self):
         return '{}'.format(self.headline.__str__())
@@ -62,7 +62,6 @@ class ArticleAdmin(admin.ModelAdmin):
         Displays only the articles on the headline.
         All articles is too much for the current server
         """
-        from scraper.models import NewsSite
 
         article_query_objects = []
 
