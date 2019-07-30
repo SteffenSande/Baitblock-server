@@ -253,6 +253,7 @@ def store_if_changed(article, revision, content_list):
                     store_revision(revision, article, content_list)
                 # Create and store a diff object and hoot
                 diff_model = Diff()
+                diff_model.pos = i
                 diff_model.revision = revision
                 diff_model.save()
 
@@ -273,6 +274,7 @@ def store_if_changed(article, revision, content_list):
             for i in range(len(old_content), len(content)):
                 # Create and store a diff object and hoot
                 diff_model = Diff()
+                diff_model.pos = i
                 diff_model.revision = revision
                 diff_model.save()
 
@@ -292,6 +294,7 @@ def store_if_changed(article, revision, content_list):
                 # Create and store a diff object and hoot
                 diff_model = Diff()
                 diff_model.revision = revision
+                diff_model.pos = i
                 diff_model.save()
 
                 # Store diff changes
