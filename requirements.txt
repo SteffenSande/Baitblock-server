@@ -67,7 +67,7 @@ SecretStorage==2.3.1
 service-identity==16.0.0
 six==1.12.0
 soupsieve==1.6.1
-Twisted==17.9.0
+Twisted==19.7.0
 urllib3==1.24.1
 vine==1.1.4
 virtualenv==15.1.0
