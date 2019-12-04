@@ -18,7 +18,7 @@ constantly==15.1.0
 cryptography==2.4.2
 cycler==0.10.0
 diff-match-patch==20181111
-Django==2.1.4
+Django==2.1.11
 django-celery==3.2.2
 django-celery-beat==1.4.0
 django-timezone-field==3.0
