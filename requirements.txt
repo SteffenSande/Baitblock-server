@@ -57,7 +57,7 @@ python-crontab==2.3.5
 python-dateutil==2.7.5
 pytz==2018.7
 pyxdg==0.25
-PyYAML==3.12
+PyYAML==5.4
 query-string==2018.11.20
 redis==3.0.1
 request==2018.11.20
